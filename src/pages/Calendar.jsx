@@ -7,6 +7,8 @@ import './Calendar.css';
 function Calendar() {
   const [events, setEvents] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     event_date: '',
@@ -38,6 +40,43 @@ function Calendar() {
     loadEvents();
   };
 
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    return { firstDay, daysInMonth };
+  };
+
+  const hasEvent = (day) => {
+    const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    return events.some(e => {
+      const eventDate = typeof e.event_date === 'string' ? e.event_date.split('T')[0] : 
+                        e.event_date instanceof Date ? e.event_date.toISOString().split('T')[0] : e.event_date;
+      return eventDate === dateStr;
+    });
+  };
+
+  const getEventsForDay = (day) => {
+    const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    return events.filter(e => {
+      const eventDate = typeof e.event_date === 'string' ? e.event_date.split('T')[0] : 
+                        e.event_date instanceof Date ? e.event_date.toISOString().split('T')[0] : e.event_date;
+      return eventDate === dateStr;
+    });
+  };
+
+  const isToday = (day) => {
+    const today = new Date();
+    return day === today.getDate() && 
+           currentDate.getMonth() === today.getMonth() && 
+           currentDate.getFullYear() === today.getFullYear();
+  };
+
+  const changeMonth = (offset) => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1));
+  };
+
   if (!currentCircle) return <div>Select a circle first</div>;
 
   return (
@@ -45,7 +84,59 @@ function Calendar() {
       <Nav />
       <div className="content">
         <h2>Calendar - {currentCircle.name}</h2>
+        
+        <div className="calendar-controls">
+          <button onClick={() => changeMonth(-1)}>←</button>
+          <h3>{currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h3>
+          <button onClick={() => changeMonth(1)}>→</button>
+        </div>
+
+        <div className="calendar-grid">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+            <div key={day} className="calendar-day-header">{day}</div>
+          ))}
+          {Array.from({ length: getDaysInMonth(currentDate).firstDay }).map((_, i) => (
+            <div key={`empty-${i}`} className="calendar-day empty"></div>
+          ))}
+          {Array.from({ length: getDaysInMonth(currentDate).daysInMonth }).map((_, i) => {
+            const day = i + 1;
+            const hasEventDay = hasEvent(day);
+            return (
+              <div 
+                key={day} 
+                className={`calendar-day ${isToday(day) ? 'today' : ''} ${hasEventDay ? 'clickable' : ''}`}
+                onClick={() => hasEventDay && setSelectedDay(day)}
+              >
+                <span className="day-number">{day}</span>
+                {hasEventDay && <span className="event-indicator">●</span>}
+              </div>
+            );
+          })}
+        </div>
+
         <button onClick={() => setShowForm(true)}>Add Event</button>
+
+        {selectedDay && (
+          <div className="modal" onClick={() => setSelectedDay(null)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <h3>Events on {currentDate.toLocaleDateString('en-US', { month: 'long' })} {selectedDay}</h3>
+              {getEventsForDay(selectedDay).map(event => (
+                <div key={event.id} className="modal-event">
+                  <h4>{event.title}</h4>
+                  <p>⏰ {event.event_time}</p>
+                  <p>📍 {event.location}</p>
+                  <p>{event.notes}</p>
+                  {event.responsible_name ? (
+                    <p>✓ Claimed by {event.responsible_name}</p>
+                  ) : (
+                    <button onClick={() => { claimEvent(event.id); setSelectedDay(null); }}>Claim</button>
+                  )}
+                </div>
+              ))}
+              <button onClick={() => setSelectedDay(null)}>Close</button>
+            </div>
+          </div>
+        )}
         
         {showForm && (
           <form onSubmit={handleSubmit}>
