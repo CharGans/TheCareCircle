@@ -103,6 +103,18 @@ function Calendar() {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1));
   };
 
+  const getUpcomingEvents = () => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return events
+      .filter(e => {
+        const eventDateStr = typeof e.event_date === 'string' ? e.event_date.split('T')[0] : e.event_date;
+        const eventDate = new Date(eventDateStr);
+        return eventDate >= now;
+      })
+      .slice(0, 3);
+  };
+
   if (!currentCircle) return <div>Select a circle first</div>;
 
   return (
@@ -237,7 +249,8 @@ function Calendar() {
         )}
         
         <div className="events-list">
-          {events.map(event => (
+          <h3>Upcoming Events</h3>
+          {getUpcomingEvents().map(event => (
             <div key={event.id} className="event-card">
               <h3>{event.title}</h3>
               <p>📅 {event.event_date} {event.event_time}</p>
