@@ -116,8 +116,8 @@ function Calendar() {
             return (
               <div 
                 key={day} 
-                className={`calendar-day ${isToday(day) ? 'today' : ''} ${hasEventDay ? 'clickable' : ''}`}
-                onClick={() => hasEventDay && setSelectedDay(day)}
+                className={`calendar-day ${isToday(day) ? 'today' : ''} clickable`}
+                onClick={() => setSelectedDay(day)}
               >
                 <span className="day-number">{day}</span>
                 {hasEventDay && <span className={`event-indicator ${eventStatus}`}>●</span>}
@@ -126,67 +126,87 @@ function Calendar() {
           })}
         </div>
 
-        <button onClick={() => setShowForm(true)}>Add Event</button>
+        <button onClick={() => {
+          setFormData({ title: '', event_date: '', event_time: '', location: '', notes: '' });
+          setShowForm(true);
+        }}>Add Event</button>
 
         {selectedDay && (
           <div className="modal" onClick={() => setSelectedDay(null)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <h3>Events on {currentDate.toLocaleDateString('en-US', { month: 'long' })} {selectedDay}</h3>
-              {getEventsForDay(selectedDay).map(event => (
-                <div key={event.id} className="modal-event">
-                  <h4>{event.title}</h4>
-                  <p>⏰ {event.event_time}</p>
-                  <p>📍 {event.location}</p>
-                  <p>{event.notes}</p>
-                  {event.responsible_name ? (
-                    <div>
-                      <p>✓ Claimed by {event.responsible_name}</p>
-                      <button onClick={() => { unclaimEvent(event.id); setSelectedDay(null); }}>Unclaim</button>
-                    </div>
-                  ) : (
-                    <button onClick={() => { claimEvent(event.id); setSelectedDay(null); }}>Claim</button>
-                  )}
+              {getEventsForDay(selectedDay).length > 0 ? (
+                getEventsForDay(selectedDay).map(event => (
+                  <div key={event.id} className="modal-event">
+                    <h4>{event.title}</h4>
+                    <p>⏰ {event.event_time}</p>
+                    <p>📍 {event.location}</p>
+                    <p>{event.notes}</p>
+                    {event.responsible_name ? (
+                      <div>
+                        <p>✓ Claimed by {event.responsible_name}</p>
+                        <button onClick={() => { unclaimEvent(event.id); setSelectedDay(null); }}>Unclaim</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => { claimEvent(event.id); setSelectedDay(null); }}>Claim</button>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="no-events">
+                  <p>No events scheduled for this day.</p>
+                  <button onClick={() => {
+                    const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
+                    setFormData({...formData, event_date: dateStr});
+                    setSelectedDay(null);
+                    setShowForm(true);
+                  }}>Add Event</button>
                 </div>
-              ))}
+              )}
               <button onClick={() => setSelectedDay(null)}>Close</button>
             </div>
           </div>
         )}
         
         {showForm && (
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Event Title"
-              value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
-              required
-            />
-            <input
-              type="date"
-              value={formData.event_date}
-              onChange={(e) => setFormData({...formData, event_date: e.target.value})}
-              required
-            />
-            <input
-              type="time"
-              value={formData.event_time}
-              onChange={(e) => setFormData({...formData, event_time: e.target.value})}
-            />
-            <input
-              type="text"
-              placeholder="Location"
-              value={formData.location}
-              onChange={(e) => setFormData({...formData, location: e.target.value})}
-            />
-            <textarea
-              placeholder="Notes"
-              value={formData.notes}
-              onChange={(e) => setFormData({...formData, notes: e.target.value})}
-            />
-            <button type="submit">Add</button>
-            <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
-          </form>
+          <div className="modal" onClick={() => setShowForm(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <h3>Add New Event</h3>
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  placeholder="Event Title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({...formData, title: e.target.value})}
+                  required
+                />
+                <input
+                  type="date"
+                  value={formData.event_date}
+                  onChange={(e) => setFormData({...formData, event_date: e.target.value})}
+                  required
+                />
+                <input
+                  type="time"
+                  value={formData.event_time}
+                  onChange={(e) => setFormData({...formData, event_time: e.target.value})}
+                />
+                <input
+                  type="text"
+                  placeholder="Location"
+                  value={formData.location}
+                  onChange={(e) => setFormData({...formData, location: e.target.value})}
+                />
+                <textarea
+                  placeholder="Notes"
+                  value={formData.notes}
+                  onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                />
+                <button type="submit">Add Event</button>
+                <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+              </form>
+            </div>
+          </div>
         )}
         
         <div className="events-list">
