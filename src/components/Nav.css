@@ -1,15 +1,22 @@
 nav {
   background: white;
-  padding: 15px 30px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 20px 40px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+nav h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #667eea;
+  font-weight: 700;
+}
+
 .nav-links {
   display: flex;
-  gap: 20px;
+  gap: 15px;
   align-items: center;
 }
 
@@ -17,8 +24,55 @@ nav {
   cursor: pointer;
   color: #333;
   text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
 }
 
 .nav-links a:hover {
-  color: #007bff;
+  background: #f5f5f5;
+  color: #667eea;
+}
+
+.nav-links button {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.nav-links button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+@media (max-width: 768px) {
+  nav {
+    padding: 15px 20px;
+  }
+
+  nav h2 {
+    font-size: 18px;
+  }
+
+  .nav-links {
+    gap: 10px;
+  }
+
+  .nav-links a {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .nav-links button {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
 }

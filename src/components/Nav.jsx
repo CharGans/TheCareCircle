@@ -15,7 +15,9 @@ function Nav() {
 
   return (
     <nav>
-      <h2 onClick={() => navigate('/circle-home')} style={{ cursor: 'pointer' }}>{currentCircle.name}</h2>
+      <h2 onClick={() => navigate('/circle-home')} style={{ cursor: 'pointer' }}>
+        TheCareCircle - {currentCircle.name}
+      </h2>
       <div className="nav-links">
         <a onClick={() => navigate('/dashboard')}>All Circles</a>
         <a onClick={() => navigate('/circle-home')}>Home</a>
