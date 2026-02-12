@@ -35,7 +35,8 @@ export const api = {
   
   messages: {
     getAll: (circleId) => client.get(`/messages/${circleId}`).then(r => r.data),
-    send: (circleId, message) => client.post(`/messages/${circleId}`, { message }).then(r => r.data)
+    send: (circleId, message) => client.post(`/messages/${circleId}`, { message }).then(r => r.data),
+    delete: (circleId, messageId) => client.delete(`/messages/${circleId}/${messageId}`).then(r => r.data)
   },
   
   careplan: {

@@ -29,4 +29,13 @@ router.post('/:circleId', authenticateToken, async (req, res) => {
   }
 });
 
+router.delete('/:circleId/:id', authenticateToken, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM messages WHERE id = $1 AND user_id = $2 AND circle_id = $3', [req.params.id, req.user.id, req.params.circleId]);
+    res.json({ message: 'Message deleted' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 export default router;
