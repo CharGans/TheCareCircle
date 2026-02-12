@@ -31,11 +31,20 @@ router.post('/:circleId', authenticateToken, async (req, res) => {
 
 router.put('/:circleId/:id/claim', authenticateToken, async (req, res) => {
   try {
-    await pool.query(
-      'UPDATE events SET responsible_user_id = $1 WHERE id = $2',
-      [req.user.id, req.params.id]
-    );
-    res.json({ message: 'Event claimed' });
+    const { unclaim } = req.body;
+    if (unclaim) {
+      await pool.query(
+        'UPDATE events SET responsible_user_id = NULL WHERE id = $1',
+        [req.params.id]
+      );
+      res.json({ message: 'Event unclaimed' });
+    } else {
+      await pool.query(
+        'UPDATE events SET responsible_user_id = $1 WHERE id = $2',
+        [req.user.id, req.params.id]
+      );
+      res.json({ message: 'Event claimed' });
+    }
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

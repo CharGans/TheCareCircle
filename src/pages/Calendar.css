@@ -68,7 +68,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
-  margin: 20px 0;
+  margin: 20px auto;
   max-width: 800px;
 }
 
@@ -107,10 +107,17 @@
 }
 
 .event-indicator {
-  color: #ff5722;
   font-size: 20px;
   position: absolute;
   bottom: 5px;
+}
+
+.event-indicator.claimed {
+  color: #4caf50;
+}
+
+.event-indicator.unclaimed {
+  color: #f44336;
 }
 
 .events-list {

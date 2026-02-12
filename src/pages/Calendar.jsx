@@ -40,6 +40,11 @@ function Calendar() {
     loadEvents();
   };
 
+  const unclaimEvent = async (eventId) => {
+    await api.events.unclaim(currentCircle.id, eventId);
+    loadEvents();
+  };
+
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -64,6 +69,12 @@ function Calendar() {
                         e.event_date instanceof Date ? e.event_date.toISOString().split('T')[0] : e.event_date;
       return eventDate === dateStr;
     });
+  };
+
+  const getEventStatus = (day) => {
+    const dayEvents = getEventsForDay(day);
+    if (dayEvents.length === 0) return null;
+    return dayEvents.every(e => e.responsible_user_id) ? 'claimed' : 'unclaimed';
   };
 
   const isToday = (day) => {
@@ -101,6 +112,7 @@ function Calendar() {
           {Array.from({ length: getDaysInMonth(currentDate).daysInMonth }).map((_, i) => {
             const day = i + 1;
             const hasEventDay = hasEvent(day);
+            const eventStatus = getEventStatus(day);
             return (
               <div 
                 key={day} 
@@ -108,7 +120,7 @@ function Calendar() {
                 onClick={() => hasEventDay && setSelectedDay(day)}
               >
                 <span className="day-number">{day}</span>
-                {hasEventDay && <span className="event-indicator">●</span>}
+                {hasEventDay && <span className={`event-indicator ${eventStatus}`}>●</span>}
               </div>
             );
           })}
@@ -127,7 +139,10 @@ function Calendar() {
                   <p>📍 {event.location}</p>
                   <p>{event.notes}</p>
                   {event.responsible_name ? (
-                    <p>✓ Claimed by {event.responsible_name}</p>
+                    <div>
+                      <p>✓ Claimed by {event.responsible_name}</p>
+                      <button onClick={() => { unclaimEvent(event.id); setSelectedDay(null); }}>Unclaim</button>
+                    </div>
                   ) : (
                     <button onClick={() => { claimEvent(event.id); setSelectedDay(null); }}>Claim</button>
                   )}
@@ -182,7 +197,10 @@ function Calendar() {
               <p>📍 {event.location}</p>
               <p>{event.notes}</p>
               {event.responsible_name ? (
-                <p>✓ Claimed by {event.responsible_name}</p>
+                <div>
+                  <p>✓ Claimed by {event.responsible_name}</p>
+                  <button onClick={() => unclaimEvent(event.id)}>Unclaim</button>
+                </div>
               ) : (
                 <button onClick={() => claimEvent(event.id)}>Claim Responsibility</button>
               )}
