@@ -1,0 +1,82 @@
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  nickname VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE care_circles (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  owner_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE circle_members (
+  id SERIAL PRIMARY KEY,
+  circle_id INTEGER REFERENCES care_circles(id) ON DELETE CASCADE,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  role VARCHAR(50) DEFAULT 'member',
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(circle_id, user_id)
+);
+
+CREATE TABLE events (
+  id SERIAL PRIMARY KEY,
+  circle_id INTEGER REFERENCES care_circles(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  event_date DATE NOT NULL,
+  event_time TIME,
+  location VARCHAR(255),
+  notes TEXT,
+  responsible_user_id INTEGER REFERENCES users(id),
+  created_by INTEGER REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE messages (
+  id SERIAL PRIMARY KEY,
+  circle_id INTEGER REFERENCES care_circles(id) ON DELETE CASCADE,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  message TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE medications (
+  id SERIAL PRIMARY KEY,
+  circle_id INTEGER REFERENCES care_circles(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  dosage VARCHAR(100),
+  schedule VARCHAR(255),
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE care_notes (
+  id SERIAL PRIMARY KEY,
+  circle_id INTEGER REFERENCES care_circles(id) ON DELETE CASCADE,
+  note TEXT NOT NULL,
+  created_by INTEGER REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tasks (
+  id SERIAL PRIMARY KEY,
+  circle_id INTEGER REFERENCES care_circles(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  completed BOOLEAN DEFAULT FALSE,
+  completed_by INTEGER REFERENCES users(id),
+  completed_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE healthcare_providers (
+  id SERIAL PRIMARY KEY,
+  circle_id INTEGER REFERENCES care_circles(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  specialty VARCHAR(255),
+  phone VARCHAR(50),
+  hospital VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
