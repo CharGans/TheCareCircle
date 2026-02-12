@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import CircleHome from './pages/CircleHome';
 import Calendar from './pages/Calendar';
 import Messages from './pages/Messages';
 import CarePlan from './pages/CarePlan';
@@ -22,12 +23,13 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
+        <Route path="/circle-home" element={token ? <CircleHome /> : <Navigate to="/login" />} />
         <Route path="/calendar" element={token ? <Calendar /> : <Navigate to="/login" />} />
         <Route path="/messages" element={token ? <Messages /> : <Navigate to="/login" />} />
         <Route path="/careplan" element={token ? <CarePlan /> : <Navigate to="/login" />} />
         <Route path="/checklist" element={token ? <Checklist /> : <Navigate to="/login" />} />
         <Route path="/providers" element={token ? <Providers /> : <Navigate to="/login" />} />
-        <Route path="/manage" element={token ? <ManageMembers /> : <Navigate to="/login" />} />
+        <Route path="/members" element={token ? <ManageMembers /> : <Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   );
