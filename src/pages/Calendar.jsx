@@ -115,6 +115,20 @@ function Calendar() {
       .slice(0, 3);
   };
 
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  };
+
+  const formatTime = (timeStr) => {
+    if (!timeStr) return '';
+    const [hours, minutes] = timeStr.split(':');
+    const hour = parseInt(hours);
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minutes} ${period}`;
+  };
+
   if (!currentCircle) return <div>Select a circle first</div>;
 
   return (
@@ -253,7 +267,8 @@ function Calendar() {
           {getUpcomingEvents().map(event => (
             <div key={event.id} className="event-card">
               <h3>{event.title}</h3>
-              <p>📅 {event.event_date} {event.event_time}</p>
+              <p>📅 {formatDate(event.event_date)}</p>
+              <p>⏰ {formatTime(event.event_time)}</p>
               <p>📍 {event.location}</p>
               <p>{event.notes}</p>
               {event.responsible_name ? (
