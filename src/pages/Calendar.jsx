@@ -16,6 +16,7 @@ function Calendar() {
     location: '',
     notes: ''
   });
+  const [timeInputs, setTimeInputs] = useState({ hour: '12', minute: '00', period: 'PM' });
   const currentCircle = useStore(state => state.currentCircle);
 
   useEffect(() => {
@@ -29,8 +30,15 @@ function Calendar() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await api.events.create(currentCircle.id, formData);
+    const hour24 = timeInputs.period === 'PM' && timeInputs.hour !== '12' 
+      ? String(parseInt(timeInputs.hour) + 12) 
+      : timeInputs.period === 'AM' && timeInputs.hour === '12' 
+      ? '00' 
+      : timeInputs.hour.padStart(2, '0');
+    const timeString = `${hour24}:${timeInputs.minute}`;
+    await api.events.create(currentCircle.id, { ...formData, event_time: timeString });
     setFormData({ title: '', event_date: '', event_time: '', location: '', notes: '' });
+    setTimeInputs({ hour: '12', minute: '00', period: 'PM' });
     setShowForm(false);
     loadEvents();
   };
@@ -43,6 +51,13 @@ function Calendar() {
   const unclaimEvent = async (eventId) => {
     await api.events.unclaim(currentCircle.id, eventId);
     loadEvents();
+  };
+
+  const deleteEvent = async (eventId) => {
+    if (window.confirm('Are you sure you want to delete this event?')) {
+      await api.events.delete(currentCircle.id, eventId);
+      loadEvents();
+    }
   };
 
   const getDaysInMonth = (date) => {
@@ -146,9 +161,13 @@ function Calendar() {
                       <div>
                         <p>✓ Claimed by {event.responsible_name}</p>
                         <button onClick={() => { unclaimEvent(event.id); setSelectedDay(null); }}>Unclaim</button>
+                        <button className="delete-btn" onClick={() => { deleteEvent(event.id); setSelectedDay(null); }}>Delete</button>
                       </div>
                     ) : (
-                      <button onClick={() => { claimEvent(event.id); setSelectedDay(null); }}>Claim</button>
+                      <div>
+                        <button onClick={() => { claimEvent(event.id); setSelectedDay(null); }}>Claim</button>
+                        <button className="delete-btn" onClick={() => { deleteEvent(event.id); setSelectedDay(null); }}>Delete</button>
+                      </div>
                     )}
                   </div>
                 ))
@@ -186,11 +205,19 @@ function Calendar() {
                   onChange={(e) => setFormData({...formData, event_date: e.target.value})}
                   required
                 />
-                <input
-                  type="time"
-                  value={formData.event_time}
-                  onChange={(e) => setFormData({...formData, event_time: e.target.value})}
-                />
+                <div className="time-picker">
+                  <select value={timeInputs.hour} onChange={(e) => setTimeInputs({...timeInputs, hour: e.target.value})}>
+                    {Array.from({length: 12}, (_, i) => String(i + 1)).map(h => <option key={h} value={h}>{h}</option>)}
+                  </select>
+                  <span>:</span>
+                  <select value={timeInputs.minute} onChange={(e) => setTimeInputs({...timeInputs, minute: e.target.value})}>
+                    {['00', '15', '30', '45'].map(m => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                  <select value={timeInputs.period} onChange={(e) => setTimeInputs({...timeInputs, period: e.target.value})}>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                </div>
                 <input
                   type="text"
                   placeholder="Location"
@@ -220,9 +247,13 @@ function Calendar() {
                 <div>
                   <p>✓ Claimed by {event.responsible_name}</p>
                   <button onClick={() => unclaimEvent(event.id)}>Unclaim</button>
+                  <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete Event</button>
                 </div>
               ) : (
-                <button onClick={() => claimEvent(event.id)}>Claim Responsibility</button>
+                <div>
+                  <button onClick={() => claimEvent(event.id)}>Claim Responsibility</button>
+                  <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete Event</button>
+                </div>
               )}
             </div>
           ))}

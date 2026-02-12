@@ -50,4 +50,13 @@ router.put('/:circleId/:id/claim', authenticateToken, async (req, res) => {
   }
 });
 
+router.delete('/:circleId/:id', authenticateToken, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM events WHERE id = $1 AND circle_id = $2', [req.params.id, req.params.circleId]);
+    res.json({ message: 'Event deleted' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 export default router;

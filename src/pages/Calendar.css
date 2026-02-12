@@ -304,3 +304,34 @@
   background: #e8f5e9;
   color: #2e7d32;
 }
+
+.time-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-picker select {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  background: white;
+}
+
+.time-picker span {
+  font-size: 18px;
+  font-weight: bold;
+  color: #666;
+}
+
+.delete-btn {
+  background: #f44336 !important;
+  color: white !important;
+  margin-left: 8px;
+}
+
+.delete-btn:hover {
+  background: #d32f2f !important;
+}
