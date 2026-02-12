@@ -31,11 +31,29 @@ router.post('/:circleId', authenticateToken, async (req, res) => {
 
 router.put('/:circleId/:id/claim', authenticateToken, async (req, res) => {
   try {
-    await pool.query(
-      'UPDATE events SET responsible_user_id = $1 WHERE id = $2',
-      [req.user.id, req.params.id]
-    );
-    res.json({ message: 'Event claimed' });
+    const { unclaim } = req.body;
+    if (unclaim) {
+      await pool.query(
+        'UPDATE events SET responsible_user_id = NULL WHERE id = $1',
+        [req.params.id]
+      );
+      res.json({ message: 'Event unclaimed' });
+    } else {
+      await pool.query(
+        'UPDATE events SET responsible_user_id = $1 WHERE id = $2',
+        [req.user.id, req.params.id]
+      );
+      res.json({ message: 'Event claimed' });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.delete('/:circleId/:id', authenticateToken, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM events WHERE id = $1 AND circle_id = $2', [req.params.id, req.params.circleId]);
+    res.json({ message: 'Event deleted' });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
