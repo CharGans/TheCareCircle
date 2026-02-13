@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
 import Nav from '../components/Nav';
+import './Checklist.css';
 
 function Checklist() {
   const [tasks, setTasks] = useState([]);
@@ -26,6 +27,11 @@ function Checklist() {
 
   const toggleTask = async (taskId, completed) => {
     await api.tasks.update(currentCircle.id, taskId, !completed);
+    loadTasks();
+  };
+
+  const deleteTask = async (taskId) => {
+    await api.tasks.delete(currentCircle.id, taskId);
     loadTasks();
   };
 
@@ -58,6 +64,7 @@ function Checklist() {
               />
               <span className={task.completed ? 'completed' : ''}>{task.title}</span>
               {task.completed_by_name && <small>by {task.completed_by_name}</small>}
+              <button className="delete-task-btn" onClick={() => deleteTask(task.id)}>×</button>
             </div>
           ))}
         </div>

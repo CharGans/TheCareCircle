@@ -1,0 +1,153 @@
+.checklist {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.checklist .content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.checklist .content > h2 {
+  text-align: center;
+  font-size: 36px;
+  color: #333;
+  margin: 0 0 40px 0;
+  font-weight: 700;
+}
+
+.checklist form {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.checklist form input {
+  flex: 1;
+  padding: 15px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.checklist form input:focus {
+  border-color: #667eea;
+}
+
+.checklist form button {
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.checklist form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.task-item {
+  background: white;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-left: 5px solid #667eea;
+}
+
+.task-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.task-item input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.task-item span {
+  flex: 1;
+  font-size: 16px;
+  color: #333;
+  transition: all 0.3s;
+}
+
+.task-item span.completed {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.task-item small {
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+}
+
+.delete-task-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  line-height: 1;
+  padding: 0;
+}
+
+.delete-task-btn:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .checklist .content {
+    padding: 20px 15px;
+  }
+
+  .checklist .content > h2 {
+    font-size: 28px;
+  }
+
+  .checklist form {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .checklist form button {
+    width: 100%;
+  }
+
+  .task-item {
+    padding: 15px 20px;
+  }
+}
