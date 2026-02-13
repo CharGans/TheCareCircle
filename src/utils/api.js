@@ -55,6 +55,8 @@ export const api = {
   
   providers: {
     getAll: (circleId) => client.get(`/providers/${circleId}`).then(r => r.data),
-    create: (circleId, data) => client.post(`/providers/${circleId}`, data).then(r => r.data)
+    create: (circleId, data) => client.post(`/providers/${circleId}`, data).then(r => r.data),
+    update: (circleId, providerId, data) => client.put(`/providers/${circleId}/${providerId}`, data).then(r => r.data),
+    delete: (circleId, providerId) => client.delete(`/providers/${circleId}/${providerId}`).then(r => r.data)
   }
 };

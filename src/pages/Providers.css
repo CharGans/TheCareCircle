@@ -133,6 +133,7 @@
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   transition: transform 0.3s, box-shadow 0.3s;
   border-top: 5px solid #667eea;
+  position: relative;
 }
 
 .provider-card:hover {
@@ -158,6 +159,59 @@
   color: #333;
   font-weight: 500;
   font-size: 16px;
+}
+
+.provider-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.provider-actions button {
+  flex: 1;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-btn {
+  background: #667eea;
+  color: white;
+  width: 100%;
+}
+
+.edit-btn:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.provider-card .delete-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  line-height: 1;
+  padding: 0;
+}
+
+.provider-card .delete-btn:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
 }
 
 @media (max-width: 768px) {
