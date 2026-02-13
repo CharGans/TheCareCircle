@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
 import Nav from '../components/Nav';
+import './Checklist.css';
 
 function Checklist() {
   const [tasks, setTasks] = useState([]);
