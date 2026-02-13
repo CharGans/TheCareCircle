@@ -1,0 +1,180 @@
+.providers {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.providers .content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.providers .content > h2 {
+  text-align: center;
+  font-size: 36px;
+  color: #333;
+  margin: 0 0 30px 0;
+  font-weight: 700;
+}
+
+.providers .content > button {
+  display: block;
+  margin: 0 auto 30px;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.providers .content > button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.modal-content h3 {
+  margin: 0 0 25px 0;
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+}
+
+.providers form {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  max-width: none;
+}
+
+.providers form input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  margin-bottom: 15px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.providers form input:focus {
+  border-color: #667eea;
+}
+
+.providers form button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-right: 10px;
+}
+
+.providers form button[type="submit"] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.providers form button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.providers form button[type="button"] {
+  background: #6c757d;
+  color: white;
+}
+
+.providers form button[type="button"]:hover {
+  background: #5a6268;
+}
+
+.providers-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.provider-card {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  border-top: 5px solid #667eea;
+}
+
+.provider-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.provider-card h3 {
+  margin: 0 0 10px 0;
+  color: #667eea;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.provider-card p {
+  margin: 10px 0;
+  color: #555;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.provider-card p:first-of-type {
+  color: #333;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .providers .content {
+    padding: 20px 15px;
+  }
+
+  .providers .content > h2 {
+    font-size: 28px;
+  }
+
+  .providers-list {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .providers form {
+    padding: 20px;
+  }
+}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
 import Nav from '../components/Nav';
+import './Providers.css';
 
 function Providers() {
   const [providers, setProviders] = useState([]);
@@ -35,38 +36,6 @@ function Providers() {
         <h2>Healthcare Providers - {currentCircle.name}</h2>
         <button onClick={() => setShowForm(true)}>Add Provider</button>
         
-        {showForm && (
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Provider Name"
-              value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Specialty"
-              value={formData.specialty}
-              onChange={(e) => setFormData({...formData, specialty: e.target.value})}
-            />
-            <input
-              type="text"
-              placeholder="Phone"
-              value={formData.phone}
-              onChange={(e) => setFormData({...formData, phone: e.target.value})}
-            />
-            <input
-              type="text"
-              placeholder="Hospital"
-              value={formData.hospital}
-              onChange={(e) => setFormData({...formData, hospital: e.target.value})}
-            />
-            <button type="submit">Add</button>
-            <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
-          </form>
-        )}
-        
         <div className="providers-list">
           {providers.map(provider => (
             <div key={provider.id} className="provider-card">
@@ -78,6 +47,43 @@ function Providers() {
           ))}
         </div>
       </div>
+      
+      {showForm && (
+        <div className="modal" onClick={() => setShowForm(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Add Healthcare Provider</h3>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Provider Name"
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Specialty"
+                value={formData.specialty}
+                onChange={(e) => setFormData({...formData, specialty: e.target.value})}
+              />
+              <input
+                type="text"
+                placeholder="Phone"
+                value={formData.phone}
+                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+              />
+              <input
+                type="text"
+                placeholder="Hospital"
+                value={formData.hospital}
+                onChange={(e) => setFormData({...formData, hospital: e.target.value})}
+              />
+              <button type="submit">Add</button>
+              <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
