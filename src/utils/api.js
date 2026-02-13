@@ -49,7 +49,8 @@ export const api = {
   tasks: {
     getAll: (circleId) => client.get(`/tasks/${circleId}`).then(r => r.data),
     create: (circleId, title) => client.post(`/tasks/${circleId}`, { title }).then(r => r.data),
-    update: (circleId, taskId, completed) => client.put(`/tasks/${circleId}/${taskId}`, { completed }).then(r => r.data)
+    update: (circleId, taskId, completed) => client.put(`/tasks/${circleId}/${taskId}`, { completed }).then(r => r.data),
+    delete: (circleId, taskId) => client.delete(`/tasks/${circleId}/${taskId}`).then(r => r.data)
   },
   
   providers: {

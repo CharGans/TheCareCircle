@@ -42,4 +42,13 @@ router.put('/:circleId/:id', authenticateToken, async (req, res) => {
   }
 });
 
+router.delete('/:circleId/:id', authenticateToken, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM tasks WHERE id = $1', [req.params.id]);
+    res.json({ message: 'Task deleted' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 export default router;

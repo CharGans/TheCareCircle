@@ -30,6 +30,11 @@ function Checklist() {
     loadTasks();
   };
 
+  const deleteTask = async (taskId) => {
+    await api.tasks.delete(currentCircle.id, taskId);
+    loadTasks();
+  };
+
   if (!currentCircle) return <div>Select a circle first</div>;
 
   return (
@@ -59,6 +64,7 @@ function Checklist() {
               />
               <span className={task.completed ? 'completed' : ''}>{task.title}</span>
               {task.completed_by_name && <small>by {task.completed_by_name}</small>}
+              <button className="delete-task-btn" onClick={() => deleteTask(task.id)}>×</button>
             </div>
           ))}
         </div>
