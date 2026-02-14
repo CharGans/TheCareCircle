@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
 import Nav from '../components/Nav';
+import './ManageMembers.css';
 
 function ManageMembers() {
   const [members, setMembers] = useState([]);
@@ -9,6 +10,7 @@ function ManageMembers() {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('member');
   const currentCircle = useStore(state => state.currentCircle);
+  const userRole = useStore(state => state.userRole);
 
   useEffect(() => {
     if (currentCircle) loadMembers();
@@ -39,6 +41,18 @@ function ManageMembers() {
   };
 
   if (!currentCircle) return <div>Select a circle first</div>;
+  
+  if (userRole !== 'owner' && userRole !== 'admin' && userRole !== 'co-owner') {
+    return (
+      <div className="manage-members">
+        <Nav />
+        <div className="content">
+          <h2>Access Denied</h2>
+          <p>You do not have permission to view this page.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="manage-members">
@@ -46,25 +60,6 @@ function ManageMembers() {
       <div className="content">
         <h2>Manage Members - {currentCircle.name}</h2>
         <button onClick={() => setShowInvite(true)}>Invite Member</button>
-        
-        {showInvite && (
-          <form onSubmit={handleInvite}>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <select value={role} onChange={(e) => setRole(e.target.value)}>
-              <option value="member">Member</option>
-              <option value="admin">Admin</option>
-              <option value="co-owner">Co-Owner</option>
-            </select>
-            <button type="submit">Invite</button>
-            <button type="button" onClick={() => setShowInvite(false)}>Cancel</button>
-          </form>
-        )}
         
         <div className="members-list">
           {members.map(member => (
@@ -87,6 +82,30 @@ function ManageMembers() {
           ))}
         </div>
       </div>
+      
+      {showInvite && (
+        <div className="modal" onClick={() => setShowInvite(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Invite Member</h3>
+            <form onSubmit={handleInvite}>
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <select value={role} onChange={(e) => setRole(e.target.value)}>
+                <option value="member">Member</option>
+                <option value="admin">Admin</option>
+                <option value="co-owner">Co-Owner</option>
+              </select>
+              <button type="submit">Invite</button>
+              <button type="button" onClick={() => setShowInvite(false)}>Cancel</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
