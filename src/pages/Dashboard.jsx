@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
+import Nav from '../components/Nav';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -48,10 +49,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      <div className="dashboard-nav">
-        <h2>TheCareCircle</h2>
-        <button onClick={() => { useStore.getState().logout(); navigate('/'); }}>Logout</button>
-      </div>
+      <Nav />
       <div className="content">
         <div className="dashboard-header">
           <h2>My Care Circles</h2>
