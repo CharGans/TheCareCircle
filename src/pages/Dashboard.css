@@ -56,14 +56,16 @@
 }
 
 .circles-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 25px;
   margin-top: 20px;
   padding: 20px;
+  justify-content: center;
 }
 
 .circle-card {
+  width: 250px;
   background: white;
   padding: 40px 30px;
   border-radius: 20px;
@@ -232,12 +234,12 @@
   }
 
   .circles-list {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
     padding: 15px;
   }
 
   .circle-card {
+    width: 200px;
     padding: 30px 20px;
   }
 
@@ -257,7 +259,8 @@
 }
 
 @media (max-width: 480px) {
-  .circles-list {
-    grid-template-columns: 1fr;
+  .circle-card {
+    width: 100%;
+    max-width: 300px;
   }
 }
