@@ -16,6 +16,11 @@ export const api = {
     login: (data) => client.post('/auth/login', data).then(r => r.data)
   },
   
+  user: {
+    updateNickname: (nickname) => client.put('/user/nickname', { nickname }).then(r => r.data),
+    deleteAccount: () => client.delete('/user').then(r => r.data)
+  },
+  
   circles: {
     create: (data) => client.post('/circles', data).then(r => r.data),
     getAll: () => client.get('/circles').then(r => r.data),
