@@ -81,6 +81,36 @@
   overflow: hidden;
 }
 
+.delete-circle-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  line-height: 1;
+  padding: 0;
+  opacity: 0;
+}
+
+.circle-card:hover .delete-circle-btn {
+  opacity: 1;
+}
+
+.delete-circle-btn:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
+}
+
 .circle-card::before {
   content: '';
   position: absolute;

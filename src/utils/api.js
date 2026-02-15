@@ -22,7 +22,8 @@ export const api = {
     getMembers: (id) => client.get(`/circles/${id}/members`).then(r => r.data),
     addMember: (id, data) => client.post(`/circles/${id}/members`, data).then(r => r.data),
     updateMemberRole: (id, userId, role) => client.put(`/circles/${id}/members/${userId}`, { role }).then(r => r.data),
-    removeMember: (id, userId) => client.delete(`/circles/${id}/members/${userId}`).then(r => r.data)
+    removeMember: (id, userId) => client.delete(`/circles/${id}/members/${userId}`).then(r => r.data),
+    delete: (id) => client.delete(`/circles/${id}`).then(r => r.data)
   },
   
   events: {

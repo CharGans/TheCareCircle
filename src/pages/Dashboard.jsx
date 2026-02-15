@@ -38,6 +38,14 @@ function Dashboard() {
     navigate('/circle-home');
   };
 
+  const handleDelete = async (circleId, e) => {
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this circle? This action cannot be undone.')) {
+      await api.circles.delete(circleId);
+      loadCircles();
+    }
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-nav">
@@ -53,6 +61,7 @@ function Dashboard() {
         <div className="circles-list">
           {circles.map(circle => (
             <div key={circle.id} className="circle-card" onClick={() => selectCircle(circle)}>
+              <button className="delete-circle-btn" onClick={(e) => handleDelete(circle.id, e)}>×</button>
               <div className="circle-icon">{circle.name.charAt(0).toUpperCase()}</div>
               <h3>{circle.name}</h3>
             </div>
