@@ -6,6 +6,7 @@ import './CircleHome.css';
 function CircleHome() {
   const navigate = useNavigate();
   const currentCircle = useStore(state => state.currentCircle);
+  const userRole = useStore(state => state.userRole);
 
   if (!currentCircle) {
     navigate('/dashboard');
@@ -17,9 +18,12 @@ function CircleHome() {
     { name: 'Messages', path: '/messages', icon: '💬', description: 'Chat with circle members' },
     { name: 'Care Plan', path: '/careplan', icon: '💊', description: 'Medications and care notes' },
     { name: 'Checklist', path: '/checklist', icon: '✓', description: 'Tasks and to-dos' },
-    { name: 'Providers', path: '/providers', icon: '🏥', description: 'Healthcare providers' },
-    { name: 'Members', path: '/members', icon: '👥', description: 'Manage circle members' }
+    { name: 'Providers', path: '/providers', icon: '🏥', description: 'Healthcare providers' }
   ];
+
+  if (userRole === 'owner' || userRole === 'admin' || userRole === 'co-owner') {
+    navItems.push({ name: 'Members', path: '/members', icon: '👥', description: 'Manage circle members' });
+  }
 
   return (
     <div className="circle-home">

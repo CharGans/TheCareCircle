@@ -28,8 +28,13 @@ function Dashboard() {
     loadCircles();
   };
 
-  const selectCircle = (circle) => {
+  const selectCircle = async (circle) => {
     setCurrentCircle(circle);
+    const members = await api.circles.getMembers(circle.id);
+    const currentUser = members.find(m => m.id === useStore.getState().user?.id || m.email === useStore.getState().user?.email);
+    if (currentUser) {
+      useStore.getState().setUserRole(currentUser.role);
+    }
     navigate('/circle-home');
   };
 
