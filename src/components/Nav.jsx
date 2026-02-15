@@ -31,17 +31,19 @@ function Nav() {
     }
   };
 
-  if (!currentCircle) return null;
-
   return (
     <>
       <nav>
-        <h2 onClick={() => navigate('/circle-home')} style={{ cursor: 'pointer' }}>
-          TheCareCircle - {currentCircle.name}
+        <h2 onClick={() => currentCircle ? navigate('/circle-home') : navigate('/dashboard')} style={{ cursor: 'pointer' }}>
+          TheCareCircle{currentCircle ? ` - ${currentCircle.name}` : ''}
         </h2>
         <div className="nav-links">
-          <a onClick={() => navigate('/dashboard')}>All Circles</a>
-          <a onClick={() => navigate('/circle-home')}>Home</a>
+          {currentCircle && (
+            <>
+              <a onClick={() => navigate('/dashboard')}>All Circles</a>
+              <a onClick={() => navigate('/circle-home')}>Home</a>
+            </>
+          )}
           <a onClick={() => setShowAccount(true)}>{user?.nickname || 'Account'}</a>
           <button onClick={handleLogout}>Logout</button>
         </div>
