@@ -11,6 +11,7 @@ import CarePlan from './pages/CarePlan';
 import Checklist from './pages/Checklist';
 import Providers from './pages/Providers';
 import ManageMembers from './pages/ManageMembers';
+import Links from './pages/Links';
 import './App.css';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
         <Route path="/checklist" element={token ? <Checklist /> : <Navigate to="/login" />} />
         <Route path="/providers" element={token ? <Providers /> : <Navigate to="/login" />} />
         <Route path="/members" element={token ? <ManageMembers /> : <Navigate to="/login" />} />
+        <Route path="/links" element={token ? <Links /> : <Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   );

@@ -9,6 +9,7 @@ import careplanRoutes from './routes/careplan.js';
 import taskRoutes from './routes/tasks.js';
 import providerRoutes from './routes/providers.js';
 import userRoutes from './routes/user.js';
+import linkRoutes from './routes/links.js';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use('/api/careplan', careplanRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/providers', providerRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/links', linkRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
