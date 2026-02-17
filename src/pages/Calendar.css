@@ -133,22 +133,35 @@
   gap: 8px;
 }
 
-.modal-event button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
+.event-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 14px;
   font-weight: 500;
+  background: #e8f5e9;
+  color: #2e7d32;
 }
 
-.modal-event button:first-of-type {
-  background: #4caf50;
-  color: white;
+.time-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.modal-event button:first-of-type:hover {
-  background: #45a049;
+.time-picker select {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  background: white;
+}
+
+.time-picker span {
+  font-size: 18px;
+  font-weight: bold;
+  color: #666;
 }
 
 .modal-content > button {
@@ -245,15 +258,18 @@
   display: grid;
   gap: 15px;
   margin-top: 20px;
+  overflow: visible;
 }
 
 .event-card {
   background: white;
   padding: 25px;
+  padding-bottom: 35px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   border-left: 5px solid #2196f3;
   transition: transform 0.2s, box-shadow 0.2s;
+  overflow: visible;
 }
 
 .event-card:hover {
@@ -276,62 +292,54 @@
   line-height: 1.6;
 }
 
-.event-card button {
+.event-card > div {
+  overflow: visible;
+}
+
+.event-card button,
+.modal-event button {
   margin-top: 15px;
-  padding: 10px 20px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-
-.event-card button:first-of-type {
-  background: #4caf50;
-  color: white;
-}
-
-.event-card button:first-of-type:hover {
-  background: #45a049;
-}
-
-.event-status {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.time-picker {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.time-picker select {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  background: white;
-}
-
-.time-picker span {
-  font-size: 18px;
-  font-weight: bold;
-  color: #666;
-}
-
-.delete-btn {
-  background: #f44336 !important;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  padding: 10px 20px !important;
+  border-radius: 6px !important;
+  border: none !important;
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  transition: transform 0.2s, background 0.2s !important;
+  font-size: 14px !important;
+  white-space: nowrap !important;
+  background: #4caf50 !important;
   color: white !important;
-  margin-left: 8px;
+  display: inline-block !important;
+  box-sizing: border-box !important;
+  line-height: 1.4 !important;
+  height: auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  min-height: 38px !important;
+  max-height: none !important;
+  overflow: visible !important;
+  vertical-align: top !important;
+  clip-path: none !important;
+  transform: none;
+  text-overflow: clip !important;
 }
 
-.delete-btn:hover {
-  background: #d32f2f !important;
+.event-card button:hover,
+.modal-event button:hover {
+  background: #45a049 !important;
+  transform: translateY(-1px);
+}
+
+.event-card button.delete-btn,
+.modal-event button.delete-btn {
+  background: #dc3545 !important;
+}
+
+.event-card button.delete-btn:hover,
+.modal-event button.delete-btn:hover {
+  background: #c82333 !important;
+  transform: translateY(-1px);
 }
