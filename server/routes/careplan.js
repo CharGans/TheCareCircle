@@ -29,6 +29,31 @@ router.post('/:circleId/medications', authenticateToken, async (req, res) => {
   }
 });
 
+router.put('/:circleId/medications/:medId', authenticateToken, async (req, res) => {
+  try {
+    const { name, dosage, schedule, notes } = req.body;
+    const result = await pool.query(
+      'UPDATE medications SET name = $1, dosage = $2, schedule = $3, notes = $4 WHERE id = $5 AND circle_id = $6 RETURNING *',
+      [name, dosage, schedule, notes, req.params.medId, req.params.circleId]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.delete('/:circleId/medications/:medId', authenticateToken, async (req, res) => {
+  try {
+    await pool.query(
+      'DELETE FROM medications WHERE id = $1 AND circle_id = $2',
+      [req.params.medId, req.params.circleId]
+    );
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 router.get('/:circleId/notes', authenticateToken, async (req, res) => {
   try {
     const result = await pool.query(
@@ -49,6 +74,31 @@ router.post('/:circleId/notes', authenticateToken, async (req, res) => {
       [req.params.circleId, note, req.user.id]
     );
     res.json(result.rows[0]);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.put('/:circleId/notes/:noteId', authenticateToken, async (req, res) => {
+  try {
+    const { note } = req.body;
+    const result = await pool.query(
+      'UPDATE care_notes SET note = $1 WHERE id = $2 AND circle_id = $3 RETURNING *',
+      [note, req.params.noteId, req.params.circleId]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.delete('/:circleId/notes/:noteId', authenticateToken, async (req, res) => {
+  try {
+    await pool.query(
+      'DELETE FROM care_notes WHERE id = $1 AND circle_id = $2',
+      [req.params.noteId, req.params.circleId]
+    );
+    res.json({ success: true });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

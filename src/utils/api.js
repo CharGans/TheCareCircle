@@ -48,8 +48,12 @@ export const api = {
   careplan: {
     getMedications: (circleId) => client.get(`/careplan/${circleId}/medications`).then(r => r.data),
     addMedication: (circleId, data) => client.post(`/careplan/${circleId}/medications`, data).then(r => r.data),
+    updateMedication: (circleId, medId, data) => client.put(`/careplan/${circleId}/medications/${medId}`, data).then(r => r.data),
+    deleteMedication: (circleId, medId) => client.delete(`/careplan/${circleId}/medications/${medId}`).then(r => r.data),
     getNotes: (circleId) => client.get(`/careplan/${circleId}/notes`).then(r => r.data),
-    addNote: (circleId, note) => client.post(`/careplan/${circleId}/notes`, { note }).then(r => r.data)
+    addNote: (circleId, note) => client.post(`/careplan/${circleId}/notes`, { note }).then(r => r.data),
+    updateNote: (circleId, noteId, note) => client.put(`/careplan/${circleId}/notes/${noteId}`, { note }).then(r => r.data),
+    deleteNote: (circleId, noteId) => client.delete(`/careplan/${circleId}/notes/${noteId}`).then(r => r.data)
   },
   
   tasks: {
