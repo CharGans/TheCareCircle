@@ -21,6 +21,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 30px;
+  align-items: start;
 }
 
 .careplan section {
@@ -29,6 +30,8 @@
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .careplan section h3 {
@@ -170,6 +173,9 @@
   border-left: 5px solid #667eea;
   transition: transform 0.2s, box-shadow 0.2s;
   position: relative;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .card-actions {
@@ -213,6 +219,25 @@
   transform: scale(1.1);
 }
 
+.view-more-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  color: #667eea;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.view-more-btn:hover {
+  background: #e9ecef;
+  border-color: #667eea;
+}
+
 .med-card:hover, .note-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -229,6 +254,8 @@
   margin: 8px 0;
   color: #555;
   line-height: 1.6;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .note-card p {
@@ -236,6 +263,8 @@
   color: #333;
   line-height: 1.6;
   font-size: 15px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .note-card small {

@@ -11,6 +11,8 @@ function CarePlan() {
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [editingMed, setEditingMed] = useState(null);
   const [editingNote, setEditingNote] = useState(null);
+  const [showAllMeds, setShowAllMeds] = useState(false);
+  const [showAllNotes, setShowAllNotes] = useState(false);
   const [medData, setMedData] = useState({ name: '', dosage: '', schedule: '', notes: '' });
   const [noteText, setNoteText] = useState('');
   const currentCircle = useStore(state => state.currentCircle);
@@ -86,6 +88,9 @@ function CarePlan() {
 
   if (!currentCircle) return <div>Select a circle first</div>;
 
+  const displayedMeds = showAllMeds ? medications : medications.slice(0, 3);
+  const displayedNotes = showAllNotes ? notes : notes.slice(0, 3);
+
   return (
     <div className="careplan">
       <Nav />
@@ -98,7 +103,7 @@ function CarePlan() {
             <button onClick={() => setShowMedForm(true)}>Add Medication</button>
             
             <div className="medications-list">
-              {medications.map(med => (
+              {displayedMeds.map(med => (
                 <div key={med.id} className="med-card">
                   <div className="card-actions">
                     <button className="edit-btn" onClick={() => handleEditMed(med)}>✎</button>
@@ -111,6 +116,11 @@ function CarePlan() {
                 </div>
               ))}
             </div>
+            {medications.length > 3 && (
+              <button className="view-more-btn" onClick={() => setShowAllMeds(!showAllMeds)}>
+                {showAllMeds ? '▲ Show Less' : `▼ View More (${medications.length - 3})`}
+              </button>
+            )}
           </section>
           
           <section>
@@ -118,7 +128,7 @@ function CarePlan() {
             <button onClick={() => setShowNoteForm(true)}>Add Note</button>
             
             <div className="notes-list">
-              {notes.map(note => (
+              {displayedNotes.map(note => (
                 <div key={note.id} className="note-card">
                   <div className="card-actions">
                     <button className="edit-btn" onClick={() => handleEditNote(note)}>✎</button>
@@ -129,6 +139,11 @@ function CarePlan() {
                 </div>
               ))}
             </div>
+            {notes.length > 3 && (
+              <button className="view-more-btn" onClick={() => setShowAllNotes(!showAllNotes)}>
+                {showAllNotes ? '▲ Show Less' : `▼ View More (${notes.length - 3})`}
+              </button>
+            )}
           </section>
         </div>
       </div>
