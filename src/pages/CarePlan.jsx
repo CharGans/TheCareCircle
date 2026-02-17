@@ -54,11 +54,43 @@ function CarePlan() {
       <div className="content">
         <h2>Care Plan - {currentCircle.name}</h2>
         
-        <section>
-          <h3>Medications</h3>
-          <button onClick={() => setShowMedForm(true)}>Add Medication</button>
+        <div className="two-column-layout">
+          <section>
+            <h3>Medications</h3>
+            <button onClick={() => setShowMedForm(true)}>Add Medication</button>
+            
+            <div className="medications-list">
+              {medications.map(med => (
+                <div key={med.id} className="med-card">
+                  <h4>{med.name}</h4>
+                  <p>Dosage: {med.dosage}</p>
+                  <p>Schedule: {med.schedule}</p>
+                  <p>{med.notes}</p>
+                </div>
+              ))}
+            </div>
+          </section>
           
-          {showMedForm && (
+          <section>
+            <h3>Care Notes</h3>
+            <button onClick={() => setShowNoteForm(true)}>Add Note</button>
+            
+            <div className="notes-list">
+              {notes.map(note => (
+                <div key={note.id} className="note-card">
+                  <p>{note.note}</p>
+                  <small>By {note.nickname} on {new Date(note.created_at).toLocaleString()}</small>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {showMedForm && (
+        <div className="modal-overlay" onClick={() => setShowMedForm(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Add Medication</h3>
             <form onSubmit={handleMedSubmit}>
               <input
                 type="text"
@@ -84,28 +116,19 @@ function CarePlan() {
                 value={medData.notes}
                 onChange={(e) => setMedData({...medData, notes: e.target.value})}
               />
-              <button type="submit">Add</button>
-              <button type="button" onClick={() => setShowMedForm(false)}>Cancel</button>
-            </form>
-          )}
-          
-          <div className="medications-list">
-            {medications.map(med => (
-              <div key={med.id} className="med-card">
-                <h4>{med.name}</h4>
-                <p>Dosage: {med.dosage}</p>
-                <p>Schedule: {med.schedule}</p>
-                <p>{med.notes}</p>
+              <div className="modal-buttons">
+                <button type="submit">Add</button>
+                <button type="button" onClick={() => setShowMedForm(false)}>Cancel</button>
               </div>
-            ))}
+            </form>
           </div>
-        </section>
-        
-        <section>
-          <h3>Care Notes</h3>
-          <button onClick={() => setShowNoteForm(true)}>Add Note</button>
-          
-          {showNoteForm && (
+        </div>
+      )}
+
+      {showNoteForm && (
+        <div className="modal-overlay" onClick={() => setShowNoteForm(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Add Care Note</h3>
             <form onSubmit={handleNoteSubmit}>
               <textarea
                 placeholder="Care note..."
@@ -113,21 +136,14 @@ function CarePlan() {
                 onChange={(e) => setNoteText(e.target.value)}
                 required
               />
-              <button type="submit">Add</button>
-              <button type="button" onClick={() => setShowNoteForm(false)}>Cancel</button>
-            </form>
-          )}
-          
-          <div className="notes-list">
-            {notes.map(note => (
-              <div key={note.id} className="note-card">
-                <p>{note.note}</p>
-                <small>By {note.nickname} on {new Date(note.created_at).toLocaleString()}</small>
+              <div className="modal-buttons">
+                <button type="submit">Add</button>
+                <button type="button" onClick={() => setShowNoteForm(false)}>Cancel</button>
               </div>
-            ))}
+            </form>
           </div>
-        </section>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
