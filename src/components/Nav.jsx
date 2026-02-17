@@ -42,6 +42,7 @@ function Nav() {
             <>
               <a onClick={() => navigate('/dashboard')}>All Circles</a>
               <a onClick={() => navigate('/circle-home')}>Home</a>
+              <a onClick={() => navigate('/links')}>Links</a>
             </>
           )}
           <a onClick={() => setShowAccount(true)}>{user?.nickname || 'Account'}</a>
