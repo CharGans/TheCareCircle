@@ -36,7 +36,8 @@ export const api = {
     create: (circleId, data) => client.post(`/events/${circleId}`, data).then(r => r.data),
     claim: (circleId, eventId) => client.put(`/events/${circleId}/${eventId}/claim`).then(r => r.data),
     unclaim: (circleId, eventId) => client.put(`/events/${circleId}/${eventId}/claim`, { unclaim: true }).then(r => r.data),
-    delete: (circleId, eventId) => client.delete(`/events/${circleId}/${eventId}`).then(r => r.data)
+    delete: (circleId, eventId) => client.delete(`/events/${circleId}/${eventId}`).then(r => r.data),
+    getICalToken: (circleId) => client.get(`/events/${circleId}/ical/token`).then(r => r.data)
   },
   
   messages: {

@@ -1,8 +1,59 @@
 import express from 'express';
 import pool from '../db/index.js';
 import { authenticateToken } from '../middleware/auth.js';
+import crypto from 'crypto';
 
 const router = express.Router();
+
+router.get('/ical/:token', async (req, res) => {
+  try {
+    const circleResult = await pool.query(
+      'SELECT id, name FROM care_circles WHERE ical_token = $1',
+      [req.params.token]
+    );
+    
+    if (circleResult.rows.length === 0) {
+      return res.status(404).send('Calendar not found');
+    }
+    
+    const circle = circleResult.rows[0];
+    const eventsResult = await pool.query(
+      'SELECT * FROM events WHERE circle_id = $1 ORDER BY event_date, event_time',
+      [circle.id]
+    );
+    
+    const ical = generateICalendar(circle, eventsResult.rows);
+    
+    res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${circle.name}.ics"`);
+    res.send(ical);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.get('/:circleId/ical/token', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT ical_token FROM care_circles WHERE id = $1',
+      [req.params.circleId]
+    );
+    
+    let token = result.rows[0]?.ical_token;
+    
+    if (!token) {
+      token = crypto.randomBytes(32).toString('hex');
+      await pool.query(
+        'UPDATE care_circles SET ical_token = $1 WHERE id = $2',
+        [token, req.params.circleId]
+      );
+    }
+    
+    res.json({ token });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
 router.get('/:circleId', authenticateToken, async (req, res) => {
   try {
@@ -58,5 +109,53 @@ router.delete('/:circleId/:id', authenticateToken, async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+function generateICalendar(circle, events) {
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//TheCareCircle//EN',
+    `X-WR-CALNAME:${circle.name}`,
+    'X-WR-TIMEZONE:UTC',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH'
+  ];
+  
+  events.forEach(event => {
+    const eventDate = new Date(event.event_date);
+    const year = eventDate.getUTCFullYear();
+    const month = String(eventDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(eventDate.getUTCDate()).padStart(2, '0');
+    const dateStr = `${year}${month}${day}`;
+    
+    let timeStr = '000000';
+    let endTimeStr = '010000';
+    if (event.event_time) {
+      const timeParts = String(event.event_time).split(':');
+      const hours = timeParts[0].padStart(2, '0');
+      const minutes = timeParts[1].padStart(2, '0');
+      timeStr = hours + minutes + '00';
+      
+      const endHour = (parseInt(hours) + 1) % 24;
+      endTimeStr = String(endHour).padStart(2, '0') + minutes + '00';
+    }
+    
+    const uid = `event-${event.id}@thecarecircle.com`;
+    const now = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    
+    lines.push('BEGIN:VEVENT');
+    lines.push(`UID:${uid}`);
+    lines.push(`DTSTAMP:${now}`);
+    lines.push(`DTSTART:${dateStr}T${timeStr}`);
+    lines.push(`DTEND:${dateStr}T${endTimeStr}`);
+    lines.push(`SUMMARY:${event.title || 'Untitled Event'}`);
+    if (event.location) lines.push(`LOCATION:${event.location}`);
+    if (event.notes) lines.push(`DESCRIPTION:${event.notes}`);
+    lines.push('END:VEVENT');
+  });
+  
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
 
 export default router;

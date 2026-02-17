@@ -151,6 +151,84 @@
   background: #45a049;
 }
 
+.ical-url-box {
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.ical-url-box input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 13px;
+  background: white;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-buttons button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.modal-buttons button:first-child {
+  background: #2196f3;
+  color: white;
+}
+
+.modal-buttons button:first-child:hover {
+  background: #1976d2;
+}
+
+.modal-buttons button:last-child {
+  background: #666;
+  color: white;
+}
+
+.modal-buttons button:last-child:hover {
+  background: #555;
+}
+
+.ical-instructions {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.ical-instructions h4 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 16px;
+}
+
+.ical-instructions ul {
+  list-style: none;
+  padding: 0;
+}
+
+.ical-instructions li {
+  padding: 8px 0;
+  color: #555;
+  line-height: 1.6;
+}
+
+.ical-instructions strong {
+  color: #2196f3;
+}
+
 .modal-content > button {
   width: 100%;
   padding: 12px;
