@@ -9,6 +9,8 @@ function Calendar() {
   const [showForm, setShowForm] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
+  const [showICalModal, setShowICalModal] = useState(false);
+  const [iCalUrl, setICalUrl] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     event_date: '',
@@ -58,6 +60,23 @@ function Calendar() {
       await api.events.delete(currentCircle.id, eventId);
       loadEvents();
     }
+  };
+
+  const showICalSubscription = async () => {
+    try {
+      const { token } = await api.events.getICalToken(currentCircle.id);
+      const url = `${window.location.origin}/api/events/ical/${token}`;
+      setICalUrl(url);
+      setShowICalModal(true);
+    } catch (error) {
+      console.error('Error getting iCal token:', error);
+      alert('Failed to generate calendar subscription URL. Please make sure your server is restarted.');
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(iCalUrl);
+    alert('iCal URL copied to clipboard!');
   };
 
   const getDaysInMonth = (date) => {
@@ -172,6 +191,8 @@ function Calendar() {
           setShowForm(true);
         }}>Add Event</button>
 
+        <button onClick={showICalSubscription} style={{ marginLeft: '10px' }}>Subscribe to Calendar</button>
+
         {selectedDay && (
           <div className="modal" onClick={() => setSelectedDay(null)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -258,6 +279,30 @@ function Calendar() {
                 <button type="submit">Add Event</button>
                 <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
               </form>
+            </div>
+          </div>
+        )}
+        
+        {showICalModal && (
+          <div className="modal-overlay" onClick={() => setShowICalModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <h3>Subscribe to Calendar</h3>
+              <p>Copy this URL and add it to your calendar app (Apple Calendar, Google Calendar, Outlook, etc.):</p>
+              <div className="ical-url-box">
+                <input type="text" value={iCalUrl} readOnly onClick={(e) => e.target.select()} />
+              </div>
+              <div className="modal-buttons">
+                <button onClick={copyToClipboard}>Copy URL</button>
+                <button onClick={() => setShowICalModal(false)}>Close</button>
+              </div>
+              <div className="ical-instructions">
+                <h4>How to subscribe:</h4>
+                <ul>
+                  <li><strong>Apple Calendar:</strong> File → New Calendar Subscription → Paste URL</li>
+                  <li><strong>Google Calendar:</strong> Settings → Add calendar → From URL → Paste URL</li>
+                  <li><strong>Outlook:</strong> Add calendar → Subscribe from web → Paste URL</li>
+                </ul>
+              </div>
             </div>
           </div>
         )}
