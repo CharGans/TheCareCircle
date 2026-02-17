@@ -275,12 +275,12 @@ function Calendar() {
                 <div>
                   <p>✓ Claimed by {event.responsible_name}</p>
                   <button onClick={() => unclaimEvent(event.id)}>Unclaim</button>
-                  <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete Event</button>
+                  <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
                 </div>
               ) : (
                 <div>
                   <button onClick={() => claimEvent(event.id)}>Claim Responsibility</button>
-                  <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete Event</button>
+                  <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
                 </div>
               )}
             </div>
