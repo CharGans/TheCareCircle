@@ -18,6 +18,8 @@
 }
 
 .links-page .content > button {
+  display: block;
+  margin: 0 auto 30px auto;
   padding: 12px 24px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -27,7 +29,6 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
-  margin-bottom: 30px;
 }
 
 .links-page .content > button:hover {
