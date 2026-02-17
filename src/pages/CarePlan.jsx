@@ -9,6 +9,10 @@ function CarePlan() {
   const [notes, setNotes] = useState([]);
   const [showMedForm, setShowMedForm] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
+  const [editingMed, setEditingMed] = useState(null);
+  const [editingNote, setEditingNote] = useState(null);
+  const [showAllMeds, setShowAllMeds] = useState(false);
+  const [showAllNotes, setShowAllNotes] = useState(false);
   const [medData, setMedData] = useState({ name: '', dosage: '', schedule: '', notes: '' });
   const [noteText, setNoteText] = useState('');
   const currentCircle = useStore(state => state.currentCircle);
@@ -32,7 +36,12 @@ function CarePlan() {
 
   const handleMedSubmit = async (e) => {
     e.preventDefault();
-    await api.careplan.addMedication(currentCircle.id, medData);
+    if (editingMed) {
+      await api.careplan.updateMedication(currentCircle.id, editingMed.id, medData);
+      setEditingMed(null);
+    } else {
+      await api.careplan.addMedication(currentCircle.id, medData);
+    }
     setMedData({ name: '', dosage: '', schedule: '', notes: '' });
     setShowMedForm(false);
     loadMedications();
@@ -40,13 +49,47 @@ function CarePlan() {
 
   const handleNoteSubmit = async (e) => {
     e.preventDefault();
-    await api.careplan.addNote(currentCircle.id, noteText);
+    if (editingNote) {
+      await api.careplan.updateNote(currentCircle.id, editingNote.id, noteText);
+      setEditingNote(null);
+    } else {
+      await api.careplan.addNote(currentCircle.id, noteText);
+    }
     setNoteText('');
     setShowNoteForm(false);
     loadNotes();
   };
 
+  const handleEditMed = (med) => {
+    setEditingMed(med);
+    setMedData({ name: med.name, dosage: med.dosage, schedule: med.schedule, notes: med.notes });
+    setShowMedForm(true);
+  };
+
+  const handleDeleteMed = async (medId) => {
+    if (confirm('Delete this medication?')) {
+      await api.careplan.deleteMedication(currentCircle.id, medId);
+      loadMedications();
+    }
+  };
+
+  const handleEditNote = (note) => {
+    setEditingNote(note);
+    setNoteText(note.note);
+    setShowNoteForm(true);
+  };
+
+  const handleDeleteNote = async (noteId) => {
+    if (confirm('Delete this note?')) {
+      await api.careplan.deleteNote(currentCircle.id, noteId);
+      loadNotes();
+    }
+  };
+
   if (!currentCircle) return <div>Select a circle first</div>;
+
+  const displayedMeds = showAllMeds ? medications : medications.slice(0, 3);
+  const displayedNotes = showAllNotes ? notes : notes.slice(0, 3);
 
   return (
     <div className="careplan">
@@ -54,11 +97,61 @@ function CarePlan() {
       <div className="content">
         <h2>Care Plan - {currentCircle.name}</h2>
         
-        <section>
-          <h3>Medications</h3>
-          <button onClick={() => setShowMedForm(true)}>Add Medication</button>
+        <div className="two-column-layout">
+          <section>
+            <h3>Medications</h3>
+            <button onClick={() => setShowMedForm(true)}>Add Medication</button>
+            
+            <div className="medications-list">
+              {displayedMeds.map(med => (
+                <div key={med.id} className="med-card">
+                  <div className="card-actions">
+                    <button className="edit-btn" onClick={() => handleEditMed(med)}>✎</button>
+                    <button className="delete-btn" onClick={() => handleDeleteMed(med.id)}>×</button>
+                  </div>
+                  <h4>{med.name}</h4>
+                  <p>Dosage: {med.dosage}</p>
+                  <p>Schedule: {med.schedule}</p>
+                  <p>{med.notes}</p>
+                </div>
+              ))}
+            </div>
+            {medications.length > 3 && (
+              <button className="view-more-btn" onClick={() => setShowAllMeds(!showAllMeds)}>
+                {showAllMeds ? '▲ Show Less' : `▼ View More (${medications.length - 3})`}
+              </button>
+            )}
+          </section>
           
-          {showMedForm && (
+          <section>
+            <h3>Care Notes</h3>
+            <button onClick={() => setShowNoteForm(true)}>Add Note</button>
+            
+            <div className="notes-list">
+              {displayedNotes.map(note => (
+                <div key={note.id} className="note-card">
+                  <div className="card-actions">
+                    <button className="edit-btn" onClick={() => handleEditNote(note)}>✎</button>
+                    <button className="delete-btn" onClick={() => handleDeleteNote(note.id)}>×</button>
+                  </div>
+                  <p>{note.note}</p>
+                  <small>By {note.nickname} on {new Date(note.created_at).toLocaleString()}</small>
+                </div>
+              ))}
+            </div>
+            {notes.length > 3 && (
+              <button className="view-more-btn" onClick={() => setShowAllNotes(!showAllNotes)}>
+                {showAllNotes ? '▲ Show Less' : `▼ View More (${notes.length - 3})`}
+              </button>
+            )}
+          </section>
+        </div>
+      </div>
+
+      {showMedForm && (
+        <div className="modal-overlay" onClick={() => { setShowMedForm(false); setEditingMed(null); setMedData({ name: '', dosage: '', schedule: '', notes: '' }); }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>{editingMed ? 'Edit Medication' : 'Add Medication'}</h3>
             <form onSubmit={handleMedSubmit}>
               <input
                 type="text"
@@ -84,28 +177,19 @@ function CarePlan() {
                 value={medData.notes}
                 onChange={(e) => setMedData({...medData, notes: e.target.value})}
               />
-              <button type="submit">Add</button>
-              <button type="button" onClick={() => setShowMedForm(false)}>Cancel</button>
-            </form>
-          )}
-          
-          <div className="medications-list">
-            {medications.map(med => (
-              <div key={med.id} className="med-card">
-                <h4>{med.name}</h4>
-                <p>Dosage: {med.dosage}</p>
-                <p>Schedule: {med.schedule}</p>
-                <p>{med.notes}</p>
+              <div className="modal-buttons">
+                <button type="submit">{editingMed ? 'Update' : 'Add'}</button>
+                <button type="button" onClick={() => { setShowMedForm(false); setEditingMed(null); setMedData({ name: '', dosage: '', schedule: '', notes: '' }); }}>Cancel</button>
               </div>
-            ))}
+            </form>
           </div>
-        </section>
-        
-        <section>
-          <h3>Care Notes</h3>
-          <button onClick={() => setShowNoteForm(true)}>Add Note</button>
-          
-          {showNoteForm && (
+        </div>
+      )}
+
+      {showNoteForm && (
+        <div className="modal-overlay" onClick={() => { setShowNoteForm(false); setEditingNote(null); setNoteText(''); }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>{editingNote ? 'Edit Care Note' : 'Add Care Note'}</h3>
             <form onSubmit={handleNoteSubmit}>
               <textarea
                 placeholder="Care note..."
@@ -113,21 +197,14 @@ function CarePlan() {
                 onChange={(e) => setNoteText(e.target.value)}
                 required
               />
-              <button type="submit">Add</button>
-              <button type="button" onClick={() => setShowNoteForm(false)}>Cancel</button>
-            </form>
-          )}
-          
-          <div className="notes-list">
-            {notes.map(note => (
-              <div key={note.id} className="note-card">
-                <p>{note.note}</p>
-                <small>By {note.nickname} on {new Date(note.created_at).toLocaleString()}</small>
+              <div className="modal-buttons">
+                <button type="submit">{editingNote ? 'Update' : 'Add'}</button>
+                <button type="button" onClick={() => { setShowNoteForm(false); setEditingNote(null); setNoteText(''); }}>Cancel</button>
               </div>
-            ))}
+            </form>
           </div>
-        </section>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
