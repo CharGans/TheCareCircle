@@ -23,7 +23,11 @@ router.post('/:circleId', authenticateToken, async (req, res) => {
       'INSERT INTO important_links (circle_id, title, url, description, created_by) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [req.params.circleId, title, url, description, req.user.id]
     );
-    res.json(result.rows[0]);
+    const linkWithUser = await pool.query(
+      'SELECT l.*, u.nickname FROM important_links l JOIN users u ON l.created_by = u.id WHERE l.id = $1',
+      [result.rows[0].id]
+    );
+    res.json(linkWithUser.rows[0]);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
