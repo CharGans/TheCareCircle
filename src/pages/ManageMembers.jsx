@@ -74,7 +74,7 @@ function ManageMembers() {
                 <option value="member">Member</option>
                 <option value="admin">Admin</option>
                 <option value="co-owner">Co-Owner</option>
-                <option value="owner">Owner</option>
+                {member.role === 'owner' && <option value="owner">Owner</option>}
               </select>
               {member.role !== 'owner' && (
                 <button onClick={() => removeMember(member.id)}>Remove</button>
