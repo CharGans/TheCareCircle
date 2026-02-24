@@ -42,7 +42,7 @@ function ManageMembers() {
 
   if (!currentCircle) return <div>Select a circle first</div>;
   
-  if (userRole !== 'owner' && userRole !== 'admin' && userRole !== 'co-owner') {
+  if (userRole !== 'owner' && userRole !== 'admin') {
     return (
       <div className="manage-members">
         <Nav />
@@ -73,8 +73,7 @@ function ManageMembers() {
               >
                 <option value="member">Member</option>
                 <option value="admin">Admin</option>
-                <option value="co-owner">Co-Owner</option>
-                <option value="owner">Owner</option>
+                {member.role === 'owner' && <option value="owner">Owner</option>}
               </select>
               {member.role !== 'owner' && (
                 <button onClick={() => removeMember(member.id)}>Remove</button>
@@ -99,7 +98,6 @@ function ManageMembers() {
               <select value={role} onChange={(e) => setRole(e.target.value)}>
                 <option value="member">Member</option>
                 <option value="admin">Admin</option>
-                <option value="co-owner">Co-Owner</option>
               </select>
               <button type="submit">Invite</button>
               <button type="button" onClick={() => setShowInvite(false)}>Cancel</button>
