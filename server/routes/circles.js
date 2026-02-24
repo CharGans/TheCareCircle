@@ -70,6 +70,15 @@ router.post('/:id/members', authenticateToken, async (req, res) => {
 router.put('/:id/members/:userId', authenticateToken, async (req, res) => {
   try {
     const { role } = req.body;
+    const currentRole = await pool.query(
+      'SELECT role FROM circle_members WHERE circle_id = $1 AND user_id = $2',
+      [req.params.id, req.params.userId]
+    );
+    
+    if (currentRole.rows[0]?.role === 'owner') {
+      return res.status(403).json({ error: 'Cannot change owner role' });
+    }
+    
     await pool.query(
       'UPDATE circle_members SET role = $1 WHERE circle_id = $2 AND user_id = $3',
       [role, req.params.id, req.params.userId]
