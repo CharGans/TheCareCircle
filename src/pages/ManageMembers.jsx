@@ -69,6 +69,7 @@ function ManageMembers() {
               <select
                 value={member.role}
                 onChange={(e) => updateRole(member.id, e.target.value)}
+                disabled={member.role === 'owner'}
               >
                 <option value="member">Member</option>
                 <option value="admin">Admin</option>
