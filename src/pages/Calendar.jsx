@@ -212,12 +212,14 @@ function Calendar() {
           })}
         </div>
 
-        <button onClick={() => {
-          setFormData({ title: '', event_date: '', event_time: '', location: '', notes: '' });
-          setShowForm(true);
-        }}>Add Event</button>
+        <div className="calendar-action-buttons">
+          <button onClick={() => {
+            setFormData({ title: '', event_date: '', event_time: '', location: '', notes: '' });
+            setShowForm(true);
+          }}>Add Event</button>
 
-        <button onClick={showICalSubscription} style={{ marginLeft: '10px' }}>Subscribe to Calendar</button>
+          <button onClick={showICalSubscription}>Subscribe to Calendar</button>
+        </div>
 
         {selectedDay && (
           <div className="modal" onClick={() => setSelectedDay(null)}>
