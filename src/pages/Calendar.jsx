@@ -180,7 +180,7 @@ function Calendar() {
     <div className="calendar">
       <Nav />
       <div className="content">
-        <h2>Calendar - {currentCircle.name}</h2>
+        {/* <h2>Calendar - {currentCircle.name}</h2> */}
         
         <div className="calendar-controls">
           <button onClick={() => changeMonth(-1)}>←</button>
