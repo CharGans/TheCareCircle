@@ -1,11 +1,12 @@
 import axios from 'axios';
+import useStore from '../store/useStore';
 
 const client = axios.create({
   baseURL: '/api'
 });
 
 client.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = useStore.getState().token;
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -13,7 +14,8 @@ client.interceptors.request.use((config) => {
 export const api = {
   auth: {
     register: (data) => client.post('/auth/register', data).then(r => r.data),
-    login: (data) => client.post('/auth/login', data).then(r => r.data)
+    login: (data) => client.post('/auth/login', data).then(r => r.data),
+    verify: () => client.get('/auth/verify').then(r => r.data)
   },
   
   user: {
