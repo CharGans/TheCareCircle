@@ -157,7 +157,7 @@ function Calendar() {
         const eventDate = new Date(eventDateStr);
         return eventDate >= now;
       })
-      .slice(0, 3);
+      .slice(0, 2);
   };
 
   const formatDate = (dateStr) => {
