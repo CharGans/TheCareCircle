@@ -21,6 +21,7 @@ function Calendar() {
   });
   const [timeInputs, setTimeInputs] = useState({ hour: '12', minute: '00', period: 'PM' });
   const currentCircle = useStore(state => state.currentCircle);
+  const user = useStore(state => state.user);
 
   useEffect(() => {
     if (currentCircle) loadEvents();
@@ -236,7 +237,9 @@ function Calendar() {
                 {event.responsible_name ? (
                   <div>
                     <p>✓ Claimed by {event.responsible_name}</p>
-                    <button onClick={() => unclaimEvent(event.id)}>Unclaim</button>
+                    {event.responsible_user_id === user?.id && (
+                      <button onClick={() => unclaimEvent(event.id)}>Unclaim</button>
+                    )}
                     <button className="edit-btn" onClick={() => editEvent(event)}>Edit</button>
                     <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
                   </div>
@@ -266,7 +269,9 @@ function Calendar() {
                     {event.responsible_name ? (
                       <div>
                         <p>✓ Claimed by {event.responsible_name}</p>
-                        <button onClick={() => { unclaimEvent(event.id); setSelectedDay(null); }}>Unclaim</button>
+                        {event.responsible_user_id === user?.id && (
+                          <button onClick={() => { unclaimEvent(event.id); setSelectedDay(null); }}>Unclaim</button>
+                        )}
                         <button className="edit-btn" onClick={() => { editEvent(event); setSelectedDay(null); }}>Edit</button>
                         <button className="delete-btn" onClick={() => { deleteEvent(event.id); setSelectedDay(null); }}>Delete</button>
                       </div>
