@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import pool from '../db/index.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -35,6 +36,15 @@ router.post('/login', async (req, res) => {
     
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
     res.json({ token, user: { id: user.id, email: user.email, nickname: user.nickname } });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.get('/verify', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, email, nickname FROM users WHERE id = $1', [req.user.id]);
+    res.json(result.rows[0]);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
