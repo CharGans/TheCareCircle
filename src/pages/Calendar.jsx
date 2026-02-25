@@ -182,43 +182,74 @@ function Calendar() {
       <div className="content">
         {/* <h2>Calendar - {currentCircle.name}</h2> */}
         
-        <div className="calendar-controls">
-          <button onClick={() => changeMonth(-1)}>←</button>
-          <h3>{currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h3>
-          <button onClick={() => changeMonth(1)}>→</button>
-        </div>
+        <div className="calendar-layout">
+          <div className="calendar-main">
+            <div className="calendar-controls">
+              <button onClick={() => changeMonth(-1)}>←</button>
+              <h3>{currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h3>
+              <button onClick={() => changeMonth(1)}>→</button>
+            </div>
 
-        <div className="calendar-grid">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="calendar-day-header">{day}</div>
-          ))}
-          {Array.from({ length: getDaysInMonth(currentDate).firstDay }).map((_, i) => (
-            <div key={`empty-${i}`} className="calendar-day empty"></div>
-          ))}
-          {Array.from({ length: getDaysInMonth(currentDate).daysInMonth }).map((_, i) => {
-            const day = i + 1;
-            const hasEventDay = hasEvent(day);
-            const eventStatus = getEventStatus(day);
-            return (
-              <div 
-                key={day} 
-                className={`calendar-day ${isToday(day) ? 'today' : ''} clickable`}
-                onClick={() => setSelectedDay(day)}
-              >
-                <span className="day-number">{day}</span>
-                {hasEventDay && <span className={`event-indicator ${eventStatus}`}>●</span>}
+            <div className="calendar-grid">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="calendar-day-header">{day}</div>
+              ))}
+              {Array.from({ length: getDaysInMonth(currentDate).firstDay }).map((_, i) => (
+                <div key={`empty-${i}`} className="calendar-day empty"></div>
+              ))}
+              {Array.from({ length: getDaysInMonth(currentDate).daysInMonth }).map((_, i) => {
+                const day = i + 1;
+                const hasEventDay = hasEvent(day);
+                const eventStatus = getEventStatus(day);
+                return (
+                  <div 
+                    key={day} 
+                    className={`calendar-day ${isToday(day) ? 'today' : ''} clickable`}
+                    onClick={() => setSelectedDay(day)}
+                  >
+                    <span className="day-number">{day}</span>
+                    {hasEventDay && <span className={`event-indicator ${eventStatus}`}>●</span>}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="calendar-action-buttons">
+              <button onClick={() => {
+                setFormData({ title: '', event_date: '', event_time: '', location: '', notes: '' });
+                setShowForm(true);
+              }}>Add Event</button>
+
+              <button onClick={showICalSubscription}>Subscribe to Calendar</button>
+            </div>
+          </div>
+
+          <div className="events-list">
+            <h3>Upcoming Events</h3>
+            {getUpcomingEvents().map(event => (
+              <div key={event.id} className="event-card">
+                <h3>{event.title}</h3>
+                <p>📅 {formatDate(event.event_date)}</p>
+                <p>⏰ {formatTime(event.event_time)}</p>
+                <p>📍 {event.location}</p>
+                <p>{event.notes}</p>
+                {event.responsible_name ? (
+                  <div>
+                    <p>✓ Claimed by {event.responsible_name}</p>
+                    <button onClick={() => unclaimEvent(event.id)}>Unclaim</button>
+                    <button className="edit-btn" onClick={() => editEvent(event)}>Edit</button>
+                    <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
+                  </div>
+                ) : (
+                  <div>
+                    <button onClick={() => claimEvent(event.id)}>Claim Responsibility</button>
+                    <button className="edit-btn" onClick={() => editEvent(event)}>Edit</button>
+                    <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
+                  </div>
+                )}
               </div>
-            );
-          })}
-        </div>
-
-        <div className="calendar-action-buttons">
-          <button onClick={() => {
-            setFormData({ title: '', event_date: '', event_time: '', location: '', notes: '' });
-            setShowForm(true);
-          }}>Add Event</button>
-
-          <button onClick={showICalSubscription}>Subscribe to Calendar</button>
+            ))}
+          </div>
         </div>
 
         {selectedDay && (
@@ -336,33 +367,6 @@ function Calendar() {
             </div>
           </div>
         )}
-        
-        <div className="events-list">
-          <h3>Upcoming Events</h3>
-          {getUpcomingEvents().map(event => (
-            <div key={event.id} className="event-card">
-              <h3>{event.title}</h3>
-              <p>📅 {formatDate(event.event_date)}</p>
-              <p>⏰ {formatTime(event.event_time)}</p>
-              <p>📍 {event.location}</p>
-              <p>{event.notes}</p>
-              {event.responsible_name ? (
-                <div>
-                  <p>✓ Claimed by {event.responsible_name}</p>
-                  <button onClick={() => unclaimEvent(event.id)}>Unclaim</button>
-                  <button className="edit-btn" onClick={() => editEvent(event)}>Edit</button>
-                  <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
-                </div>
-              ) : (
-                <div>
-                  <button onClick={() => claimEvent(event.id)}>Claim Responsibility</button>
-                  <button className="edit-btn" onClick={() => editEvent(event)}>Edit</button>
-                  <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
