@@ -7,6 +7,7 @@ import './Calendar.css';
 function Calendar() {
   const [events, setEvents] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
   const [showICalModal, setShowICalModal] = useState(false);
@@ -38,7 +39,14 @@ function Calendar() {
       ? '00' 
       : timeInputs.hour.padStart(2, '0');
     const timeString = `${hour24}:${timeInputs.minute}`;
-    await api.events.create(currentCircle.id, { ...formData, event_time: timeString });
+    
+    if (editingEvent) {
+      await api.events.update(currentCircle.id, editingEvent.id, { ...formData, event_time: timeString });
+      setEditingEvent(null);
+    } else {
+      await api.events.create(currentCircle.id, { ...formData, event_time: timeString });
+    }
+    
     setFormData({ title: '', event_date: '', event_time: '', location: '', notes: '' });
     setTimeInputs({ hour: '12', minute: '00', period: 'PM' });
     setShowForm(false);
@@ -60,6 +68,24 @@ function Calendar() {
       await api.events.delete(currentCircle.id, eventId);
       loadEvents();
     }
+  };
+
+  const editEvent = (event) => {
+    const [hours, minutes] = event.event_time.split(':');
+    const hour24 = parseInt(hours);
+    const period = hour24 >= 12 ? 'PM' : 'AM';
+    const hour12 = hour24 % 12 || 12;
+    
+    setEditingEvent(event);
+    setFormData({
+      title: event.title,
+      event_date: event.event_date.split('T')[0],
+      event_time: event.event_time,
+      location: event.location,
+      notes: event.notes
+    });
+    setTimeInputs({ hour: String(hour12), minute: minutes, period });
+    setShowForm(true);
   };
 
   const showICalSubscription = async () => {
@@ -208,11 +234,13 @@ function Calendar() {
                       <div>
                         <p>✓ Claimed by {event.responsible_name}</p>
                         <button onClick={() => { unclaimEvent(event.id); setSelectedDay(null); }}>Unclaim</button>
+                        <button className="edit-btn" onClick={() => { editEvent(event); setSelectedDay(null); }}>Edit</button>
                         <button className="delete-btn" onClick={() => { deleteEvent(event.id); setSelectedDay(null); }}>Delete</button>
                       </div>
                     ) : (
                       <div>
                         <button onClick={() => { claimEvent(event.id); setSelectedDay(null); }}>Claim</button>
+                        <button className="edit-btn" onClick={() => { editEvent(event); setSelectedDay(null); }}>Edit</button>
                         <button className="delete-btn" onClick={() => { deleteEvent(event.id); setSelectedDay(null); }}>Delete</button>
                       </div>
                     )}
@@ -235,9 +263,9 @@ function Calendar() {
         )}
         
         {showForm && (
-          <div className="modal" onClick={() => setShowForm(false)}>
+          <div className="modal" onClick={() => { setShowForm(false); setEditingEvent(null); }}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <h3>Add New Event</h3>
+              <h3>{editingEvent ? 'Edit Event' : 'Add New Event'}</h3>
               <form onSubmit={handleSubmit}>
                 <input
                   type="text"
@@ -276,8 +304,8 @@ function Calendar() {
                   value={formData.notes}
                   onChange={(e) => setFormData({...formData, notes: e.target.value})}
                 />
-                <button type="submit">Add Event</button>
-                <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+                <button type="submit">{editingEvent ? 'Update Event' : 'Add Event'}</button>
+                <button type="button" onClick={() => { setShowForm(false); setEditingEvent(null); }}>Cancel</button>
               </form>
             </div>
           </div>
@@ -320,11 +348,13 @@ function Calendar() {
                 <div>
                   <p>✓ Claimed by {event.responsible_name}</p>
                   <button onClick={() => unclaimEvent(event.id)}>Unclaim</button>
+                  <button className="edit-btn" onClick={() => editEvent(event)}>Edit</button>
                   <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
                 </div>
               ) : (
                 <div>
                   <button onClick={() => claimEvent(event.id)}>Claim Responsibility</button>
+                  <button className="edit-btn" onClick={() => editEvent(event)}>Edit</button>
                   <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
                 </div>
               )}

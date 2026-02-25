@@ -421,3 +421,14 @@
   background: #c82333 !important;
   transform: translateY(-1px);
 }
+
+.event-card button.edit-btn,
+.modal-event button.edit-btn {
+  background: #2196f3 !important;
+}
+
+.event-card button.edit-btn:hover,
+.modal-event button.edit-btn:hover {
+  background: #1976d2 !important;
+  transform: translateY(-1px);
+}
