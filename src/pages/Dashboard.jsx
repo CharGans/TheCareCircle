@@ -9,7 +9,7 @@ function Dashboard() {
   const [circles, setCircles] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [circleName, setCircleName] = useState('');
-  const { setCurrentCircle } = useStore();
+  const { setCurrentCircle, user } = useStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,7 +18,14 @@ function Dashboard() {
 
   const loadCircles = async () => {
     const data = await api.circles.getAll();
-    setCircles(data);
+    const circlesWithMembers = await Promise.all(
+      data.map(async (circle) => {
+        const members = await api.circles.getMembers(circle.id);
+        const currentUserMember = members.find(m => m.id === user?.id);
+        return { ...circle, userRole: currentUserMember?.role };
+      })
+    );
+    setCircles(circlesWithMembers);
   };
 
   const handleCreate = async (e) => {
@@ -39,11 +46,18 @@ function Dashboard() {
     navigate('/circle-home');
   };
 
-  const handleDelete = async (circleId, e) => {
+  const handleDelete = async (circle, e) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this circle? This action cannot be undone.')) {
-      await api.circles.delete(circleId);
-      loadCircles();
+    if (circle.userRole === 'owner') {
+      if (window.confirm('Are you sure you want to delete this circle? This action cannot be undone.')) {
+        await api.circles.delete(circle.id);
+        loadCircles();
+      }
+    } else {
+      if (window.confirm('Are you sure you want to leave this circle?')) {
+        await api.circles.leave(circle.id);
+        loadCircles();
+      }
     }
   };
 
@@ -59,7 +73,9 @@ function Dashboard() {
         <div className="circles-list">
           {circles.map(circle => (
             <div key={circle.id} className="circle-card" onClick={() => selectCircle(circle)}>
-              <button className="delete-circle-btn" onClick={(e) => handleDelete(circle.id, e)}>×</button>
+              <button className="delete-circle-btn" onClick={(e) => handleDelete(circle, e)}>
+                {circle.userRole === 'owner' ? '×' : '→'}
+              </button>
               <div className="circle-icon">{circle.name.charAt(0).toUpperCase()}</div>
               <h3>{circle.name}</h3>
             </div>

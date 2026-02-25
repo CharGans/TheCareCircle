@@ -105,8 +105,29 @@ router.delete('/:id/members/:userId', authenticateToken, async (req, res) => {
   }
 });
 
+router.post('/:id/leave', authenticateToken, async (req, res) => {
+  try {
+    await pool.query(
+      'DELETE FROM circle_members WHERE circle_id = $1 AND user_id = $2',
+      [req.params.id, req.user.id]
+    );
+    res.json({ message: 'Left circle' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
+    const roleCheck = await pool.query(
+      'SELECT role FROM circle_members WHERE circle_id = $1 AND user_id = $2',
+      [req.params.id, req.user.id]
+    );
+    
+    if (roleCheck.rows[0]?.role !== 'owner') {
+      return res.status(403).json({ error: 'Only the owner can delete the circle' });
+    }
+    
     await pool.query('DELETE FROM care_circles WHERE id = $1', [req.params.id]);
     res.json({ message: 'Circle deleted' });
   } catch (error) {

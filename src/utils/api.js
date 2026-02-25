@@ -30,6 +30,7 @@ export const api = {
     addMember: (id, data) => client.post(`/circles/${id}/members`, data).then(r => r.data),
     updateMemberRole: (id, userId, role) => client.put(`/circles/${id}/members/${userId}`, { role }).then(r => r.data),
     removeMember: (id, userId) => client.delete(`/circles/${id}/members/${userId}`).then(r => r.data),
+    leave: (id) => client.post(`/circles/${id}/leave`).then(r => r.data),
     delete: (id) => client.delete(`/circles/${id}`).then(r => r.data)
   },
   
