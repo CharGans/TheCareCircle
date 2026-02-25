@@ -80,6 +80,19 @@ router.post('/:circleId', authenticateToken, async (req, res) => {
   }
 });
 
+router.put('/:circleId/:id', authenticateToken, async (req, res) => {
+  try {
+    const { title, event_date, event_time, location, notes } = req.body;
+    const result = await pool.query(
+      'UPDATE events SET title = $1, event_date = $2, event_time = $3, location = $4, notes = $5 WHERE id = $6 AND circle_id = $7 RETURNING *',
+      [title, event_date, event_time, location, notes, req.params.id, req.params.circleId]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 router.put('/:circleId/:id/claim', authenticateToken, async (req, res) => {
   try {
     const { unclaim } = req.body;

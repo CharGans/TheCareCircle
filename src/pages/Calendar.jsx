@@ -7,6 +7,7 @@ import './Calendar.css';
 function Calendar() {
   const [events, setEvents] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
   const [showICalModal, setShowICalModal] = useState(false);
@@ -20,6 +21,7 @@ function Calendar() {
   });
   const [timeInputs, setTimeInputs] = useState({ hour: '12', minute: '00', period: 'PM' });
   const currentCircle = useStore(state => state.currentCircle);
+  const user = useStore(state => state.user);
 
   useEffect(() => {
     if (currentCircle) loadEvents();
@@ -38,7 +40,14 @@ function Calendar() {
       ? '00' 
       : timeInputs.hour.padStart(2, '0');
     const timeString = `${hour24}:${timeInputs.minute}`;
-    await api.events.create(currentCircle.id, { ...formData, event_time: timeString });
+    
+    if (editingEvent) {
+      await api.events.update(currentCircle.id, editingEvent.id, { ...formData, event_time: timeString });
+      setEditingEvent(null);
+    } else {
+      await api.events.create(currentCircle.id, { ...formData, event_time: timeString });
+    }
+    
     setFormData({ title: '', event_date: '', event_time: '', location: '', notes: '' });
     setTimeInputs({ hour: '12', minute: '00', period: 'PM' });
     setShowForm(false);
@@ -60,6 +69,24 @@ function Calendar() {
       await api.events.delete(currentCircle.id, eventId);
       loadEvents();
     }
+  };
+
+  const editEvent = (event) => {
+    const [hours, minutes] = event.event_time.split(':');
+    const hour24 = parseInt(hours);
+    const period = hour24 >= 12 ? 'PM' : 'AM';
+    const hour12 = hour24 % 12 || 12;
+    
+    setEditingEvent(event);
+    setFormData({
+      title: event.title,
+      event_date: event.event_date.split('T')[0],
+      event_time: event.event_time,
+      location: event.location,
+      notes: event.notes
+    });
+    setTimeInputs({ hour: String(hour12), minute: minutes, period });
+    setShowForm(true);
   };
 
   const showICalSubscription = async () => {
@@ -131,7 +158,7 @@ function Calendar() {
         const eventDate = new Date(eventDateStr);
         return eventDate >= now;
       })
-      .slice(0, 3);
+      .slice(0, 2);
   };
 
   const formatDate = (dateStr) => {
@@ -154,44 +181,79 @@ function Calendar() {
     <div className="calendar">
       <Nav />
       <div className="content">
-        <h2>Calendar - {currentCircle.name}</h2>
+        {/* <h2>Calendar - {currentCircle.name}</h2> */}
         
-        <div className="calendar-controls">
-          <button onClick={() => changeMonth(-1)}>←</button>
-          <h3>{currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h3>
-          <button onClick={() => changeMonth(1)}>→</button>
-        </div>
+        <div className="calendar-layout">
+          <div className="calendar-main">
+            <div className="calendar-controls">
+              <button onClick={() => changeMonth(-1)}>←</button>
+              <h3>{currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h3>
+              <button onClick={() => changeMonth(1)}>→</button>
+            </div>
 
-        <div className="calendar-grid">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="calendar-day-header">{day}</div>
-          ))}
-          {Array.from({ length: getDaysInMonth(currentDate).firstDay }).map((_, i) => (
-            <div key={`empty-${i}`} className="calendar-day empty"></div>
-          ))}
-          {Array.from({ length: getDaysInMonth(currentDate).daysInMonth }).map((_, i) => {
-            const day = i + 1;
-            const hasEventDay = hasEvent(day);
-            const eventStatus = getEventStatus(day);
-            return (
-              <div 
-                key={day} 
-                className={`calendar-day ${isToday(day) ? 'today' : ''} clickable`}
-                onClick={() => setSelectedDay(day)}
-              >
-                <span className="day-number">{day}</span>
-                {hasEventDay && <span className={`event-indicator ${eventStatus}`}>●</span>}
+            <div className="calendar-grid">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="calendar-day-header">{day}</div>
+              ))}
+              {Array.from({ length: getDaysInMonth(currentDate).firstDay }).map((_, i) => (
+                <div key={`empty-${i}`} className="calendar-day empty"></div>
+              ))}
+              {Array.from({ length: getDaysInMonth(currentDate).daysInMonth }).map((_, i) => {
+                const day = i + 1;
+                const hasEventDay = hasEvent(day);
+                const eventStatus = getEventStatus(day);
+                return (
+                  <div 
+                    key={day} 
+                    className={`calendar-day ${isToday(day) ? 'today' : ''} clickable`}
+                    onClick={() => setSelectedDay(day)}
+                  >
+                    <span className="day-number">{day}</span>
+                    {hasEventDay && <span className={`event-indicator ${eventStatus}`}>●</span>}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="calendar-action-buttons">
+              <button onClick={() => {
+                setFormData({ title: '', event_date: '', event_time: '', location: '', notes: '' });
+                setShowForm(true);
+              }}>Add Event</button>
+
+              <button onClick={showICalSubscription}>Subscribe to Calendar</button>
+            </div>
+          </div>
+
+          <div className="events-list">
+            <h3>Upcoming Events</h3>
+            {getUpcomingEvents().map(event => (
+              <div key={event.id} className="event-card">
+                <h3>{event.title}</h3>
+                <p>📅 {formatDate(event.event_date)}</p>
+                <p>⏰ {formatTime(event.event_time)}</p>
+                <p>📍 {event.location}</p>
+                <p>{event.notes}</p>
+                {event.responsible_name ? (
+                  <div>
+                    <p>✓ Claimed by {event.responsible_name}</p>
+                    {event.responsible_user_id === user?.id && (
+                      <button onClick={() => unclaimEvent(event.id)}>Unclaim</button>
+                    )}
+                    <button className="edit-btn" onClick={() => editEvent(event)}>Edit</button>
+                    <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
+                  </div>
+                ) : (
+                  <div>
+                    <button onClick={() => claimEvent(event.id)}>Claim Responsibility</button>
+                    <button className="edit-btn" onClick={() => editEvent(event)}>Edit</button>
+                    <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
+                  </div>
+                )}
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
-
-        <button onClick={() => {
-          setFormData({ title: '', event_date: '', event_time: '', location: '', notes: '' });
-          setShowForm(true);
-        }}>Add Event</button>
-
-        <button onClick={showICalSubscription} style={{ marginLeft: '10px' }}>Subscribe to Calendar</button>
 
         {selectedDay && (
           <div className="modal" onClick={() => setSelectedDay(null)}>
@@ -207,12 +269,16 @@ function Calendar() {
                     {event.responsible_name ? (
                       <div>
                         <p>✓ Claimed by {event.responsible_name}</p>
-                        <button onClick={() => { unclaimEvent(event.id); setSelectedDay(null); }}>Unclaim</button>
+                        {event.responsible_user_id === user?.id && (
+                          <button onClick={() => { unclaimEvent(event.id); setSelectedDay(null); }}>Unclaim</button>
+                        )}
+                        <button className="edit-btn" onClick={() => { editEvent(event); setSelectedDay(null); }}>Edit</button>
                         <button className="delete-btn" onClick={() => { deleteEvent(event.id); setSelectedDay(null); }}>Delete</button>
                       </div>
                     ) : (
                       <div>
                         <button onClick={() => { claimEvent(event.id); setSelectedDay(null); }}>Claim</button>
+                        <button className="edit-btn" onClick={() => { editEvent(event); setSelectedDay(null); }}>Edit</button>
                         <button className="delete-btn" onClick={() => { deleteEvent(event.id); setSelectedDay(null); }}>Delete</button>
                       </div>
                     )}
@@ -235,9 +301,9 @@ function Calendar() {
         )}
         
         {showForm && (
-          <div className="modal" onClick={() => setShowForm(false)}>
+          <div className="modal" onClick={() => { setShowForm(false); setEditingEvent(null); }}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <h3>Add New Event</h3>
+              <h3>{editingEvent ? 'Edit Event' : 'Add New Event'}</h3>
               <form onSubmit={handleSubmit}>
                 <input
                   type="text"
@@ -276,8 +342,8 @@ function Calendar() {
                   value={formData.notes}
                   onChange={(e) => setFormData({...formData, notes: e.target.value})}
                 />
-                <button type="submit">Add Event</button>
-                <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+                <button type="submit">{editingEvent ? 'Update Event' : 'Add Event'}</button>
+                <button type="button" onClick={() => { setShowForm(false); setEditingEvent(null); }}>Cancel</button>
               </form>
             </div>
           </div>
@@ -306,31 +372,6 @@ function Calendar() {
             </div>
           </div>
         )}
-        
-        <div className="events-list">
-          <h3>Upcoming Events</h3>
-          {getUpcomingEvents().map(event => (
-            <div key={event.id} className="event-card">
-              <h3>{event.title}</h3>
-              <p>📅 {formatDate(event.event_date)}</p>
-              <p>⏰ {formatTime(event.event_time)}</p>
-              <p>📍 {event.location}</p>
-              <p>{event.notes}</p>
-              {event.responsible_name ? (
-                <div>
-                  <p>✓ Claimed by {event.responsible_name}</p>
-                  <button onClick={() => unclaimEvent(event.id)}>Unclaim</button>
-                  <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
-                </div>
-              ) : (
-                <div>
-                  <button onClick={() => claimEvent(event.id)}>Claim Responsibility</button>
-                  <button className="delete-btn" onClick={() => deleteEvent(event.id)}>Delete</button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
