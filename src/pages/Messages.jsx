@@ -64,11 +64,6 @@ function Messages() {
       <Nav />
       <div className="messages-wrapper">
         <div className="messages-container">
-          <div className="messages-header">
-            <h2>{currentCircle.name}</h2>
-            <p>{messages.length} messages</p>
-          </div>
-          
           <div className="messages-list">
             {messages.map(msg => (
               <div key={msg.id} className={`message-bubble ${msg.user_id === user?.id ? 'own-message' : ''}`}>
@@ -105,10 +100,7 @@ function Messages() {
             {members.map(member => (
               <div key={member.user_id} className="member-item">
                 <div className="member-avatar">{member.nickname.charAt(0).toUpperCase()}</div>
-                <div className="member-info">
-                  <div className="member-name">{member.nickname}</div>
-                  <div className="member-role">{member.role}</div>
-                </div>
+                <div className="member-name">{member.nickname}</div>
               </div>
             ))}
           </div>
