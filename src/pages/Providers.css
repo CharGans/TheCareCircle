@@ -120,10 +120,15 @@
 }
 
 .providers-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 25px;
   margin-top: 20px;
+  justify-content: center;
+}
+
+.provider-card {
+  flex: 0 1 300px;
 }
 
 .provider-card {
