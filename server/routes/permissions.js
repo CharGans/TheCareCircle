@@ -16,10 +16,10 @@ router.get('/:circleId/members/:userId', authenticateToken, async (req, res) => 
       return res.json({
         can_view_calendar: true,
         can_view_messages: true,
-        can_view_careplan: true,
+        can_view_careplan: false,
         can_view_checklist: true,
-        can_view_providers: true,
-        can_view_members: true
+        can_view_providers: false,
+        can_view_members: false
       });
     }
     
@@ -91,10 +91,10 @@ router.get('/:circleId/my-permissions', authenticateToken, async (req, res) => {
       return res.json({
         can_view_calendar: true,
         can_view_messages: true,
-        can_view_careplan: true,
+        can_view_careplan: false,
         can_view_checklist: true,
-        can_view_providers: true,
-        can_view_members: true
+        can_view_providers: false,
+        can_view_members: false
       });
     }
     

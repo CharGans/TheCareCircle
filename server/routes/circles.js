@@ -61,6 +61,15 @@ router.post('/:id/members', authenticateToken, async (req, res) => {
       [req.params.id, userResult.rows[0].id, role || 'member']
     );
     
+    // Set default permissions for new members
+    await pool.query(
+      `INSERT INTO member_permissions 
+       (circle_id, user_id, can_view_calendar, can_view_messages, can_view_careplan, 
+        can_view_checklist, can_view_providers, can_view_members)
+       VALUES ($1, $2, true, true, false, true, false, false)`,
+      [req.params.id, userResult.rows[0].id]
+    );
+    
     res.json({ message: 'Member added' });
   } catch (error) {
     res.status(400).json({ error: error.message });
