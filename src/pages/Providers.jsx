@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
 import Nav from '../components/Nav';
+import PermissionGuard from '../components/PermissionGuard';
 import './Providers.css';
 
 function Providers() {
@@ -47,6 +48,7 @@ function Providers() {
   if (!currentCircle) return <div>Select a circle first</div>;
 
   return (
+    <PermissionGuard permission="can_view_providers">
     <div className="providers">
       <Nav />
       <div className="content">
@@ -106,6 +108,7 @@ function Providers() {
         </div>
       )}
     </div>
+    </PermissionGuard>
   );
 }
 

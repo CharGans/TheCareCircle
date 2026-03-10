@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
 import Nav from '../components/Nav';
+import PermissionGuard from '../components/PermissionGuard';
 import './Checklist.css';
 
 function Checklist() {
@@ -38,6 +39,7 @@ function Checklist() {
   if (!currentCircle) return <div>Select a circle first</div>;
 
   return (
+    <PermissionGuard permission="can_view_checklist">
     <div className="checklist">
       <Nav />
       <div className="content">
@@ -70,6 +72,7 @@ function Checklist() {
         </div>
       </div>
     </div>
+    </PermissionGuard>
   );
 }
 

@@ -185,9 +185,46 @@
   transition: all 0.2s;
 }
 
+.member-card button:first-of-type {
+  background: #667eea;
+}
+
+.member-card button:first-of-type:hover {
+  background: #5568d3;
+}
+
 .member-card button:hover {
   background: #d32f2f;
   transform: translateY(-2px);
+}
+
+.permissions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.permissions-list label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.permissions-list label:hover {
+  background: #f5f7fa;
+}
+
+.permissions-list input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
