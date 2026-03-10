@@ -2,11 +2,15 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
 import Nav from '../components/Nav';
+import PermissionGuard from '../components/PermissionGuard';
 import './ManageMembers.css';
 
 function ManageMembers() {
   const [members, setMembers] = useState([]);
   const [showInvite, setShowInvite] = useState(false);
+  const [showPermissions, setShowPermissions] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [permissions, setPermissions] = useState({});
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('member');
   const currentCircle = useStore(state => state.currentCircle);
@@ -40,21 +44,40 @@ function ManageMembers() {
     loadMembers();
   };
 
+  const openPermissions = async (member) => {
+    setSelectedMember(member);
+    const perms = await api.permissions.get(currentCircle.id, member.id);
+    setPermissions(perms);
+    setShowPermissions(true);
+  };
+
+  const savePermissions = async () => {
+    await api.permissions.update(currentCircle.id, selectedMember.id, permissions);
+    setShowPermissions(false);
+  };
+
+  const togglePermission = (key) => {
+    setPermissions(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
   if (!currentCircle) return <div>Select a circle first</div>;
   
-  if (userRole !== 'owner' && userRole !== 'admin') {
+  if (userRole !== 'owner') {
     return (
+      <PermissionGuard permission="can_view_members">
       <div className="manage-members">
         <Nav />
         <div className="content">
           <h2>Access Denied</h2>
-          <p>You do not have permission to view this page.</p>
+          <p>Only the owner can manage members.</p>
         </div>
       </div>
+      </PermissionGuard>
     );
   }
 
   return (
+    <PermissionGuard permission="can_view_members">
     <div className="manage-members">
       <Nav />
       <div className="content">
@@ -76,7 +99,10 @@ function ManageMembers() {
                 {member.role === 'owner' && <option value="owner">Owner</option>}
               </select>
               {member.role !== 'owner' && (
-                <button onClick={() => removeMember(member.id)}>Remove</button>
+                <>
+                  <button onClick={() => openPermissions(member)}>Permissions</button>
+                  <button onClick={() => removeMember(member.id)}>Remove</button>
+                </>
               )}
             </div>
           ))}
@@ -105,7 +131,76 @@ function ManageMembers() {
           </div>
         </div>
       )}
+
+      {showPermissions && selectedMember && (
+        <div className="modal" onClick={() => setShowPermissions(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Permissions for {selectedMember.nickname}</h3>
+            <div className="permissions-list">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={permissions.can_view_calendar ?? true}
+                  onChange={() => togglePermission('can_view_calendar')}
+                />
+                Calendar
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={permissions.can_view_messages ?? true}
+                  onChange={() => togglePermission('can_view_messages')}
+                />
+                Messages
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={permissions.can_view_careplan ?? true}
+                  onChange={() => togglePermission('can_view_careplan')}
+                />
+                Care Plan
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={permissions.can_view_checklist ?? true}
+                  onChange={() => togglePermission('can_view_checklist')}
+                />
+                Checklist
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={permissions.can_view_providers ?? true}
+                  onChange={() => togglePermission('can_view_providers')}
+                />
+                Providers
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={permissions.can_view_members ?? true}
+                  onChange={() => togglePermission('can_view_members')}
+                />
+                Members List
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={permissions.can_view_links ?? false}
+                  onChange={() => togglePermission('can_view_links')}
+                />
+                Links
+              </label>
+            </div>
+            <button onClick={savePermissions}>Save</button>
+            <button onClick={() => setShowPermissions(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
+    </PermissionGuard>
   );
 }
 

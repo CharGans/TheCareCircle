@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
 import Nav from '../components/Nav';
+import PermissionGuard from '../components/PermissionGuard';
 import './Calendar.css';
 
 function Calendar() {
@@ -178,6 +179,7 @@ function Calendar() {
   if (!currentCircle) return <div>Select a circle first</div>;
 
   return (
+    <PermissionGuard permission="can_view_calendar">
     <div className="calendar">
       <Nav />
       <div className="content">
@@ -374,6 +376,7 @@ function Calendar() {
         )}
       </div>
     </div>
+    </PermissionGuard>
   );
 }
 

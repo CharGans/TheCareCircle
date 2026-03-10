@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
 import Nav from '../components/Nav';
+import PermissionGuard from '../components/PermissionGuard';
 import './CarePlan.css';
 
 function CarePlan() {
@@ -92,6 +93,7 @@ function CarePlan() {
   const displayedNotes = showAllNotes ? notes : notes.slice(0, 3);
 
   return (
+    <PermissionGuard permission="can_view_careplan">
     <div className="careplan">
       <Nav />
       <div className="content">
@@ -206,6 +208,7 @@ function CarePlan() {
         </div>
       )}
     </div>
+    </PermissionGuard>
   );
 }
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
 import Nav from '../components/Nav';
+import PermissionGuard from '../components/PermissionGuard';
 import './Links.css';
 
 function Links() {
@@ -42,6 +43,7 @@ function Links() {
   if (!currentCircle) return <div>Select a circle first</div>;
 
   return (
+    <PermissionGuard permission="can_view_links">
     <div className="links-page">
       <Nav />
       <div className="content">
@@ -97,6 +99,7 @@ function Links() {
         )}
       </div>
     </div>
+    </PermissionGuard>
   );
 }
 

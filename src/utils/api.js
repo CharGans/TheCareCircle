@@ -79,5 +79,11 @@ export const api = {
     getAll: (circleId) => client.get(`/links/${circleId}`).then(r => r.data),
     create: (circleId, data) => client.post(`/links/${circleId}`, data).then(r => r.data),
     delete: (circleId, linkId) => client.delete(`/links/${circleId}/${linkId}`).then(r => r.data)
+  },
+  
+  permissions: {
+    get: (circleId, userId) => client.get(`/permissions/${circleId}/members/${userId}`).then(r => r.data),
+    update: (circleId, userId, permissions) => client.put(`/permissions/${circleId}/members/${userId}`, permissions).then(r => r.data),
+    getMy: (circleId) => client.get(`/permissions/${circleId}/my-permissions`).then(r => r.data)
   }
 };
