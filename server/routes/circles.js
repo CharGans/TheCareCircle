@@ -65,8 +65,8 @@ router.post('/:id/members', authenticateToken, async (req, res) => {
     await pool.query(
       `INSERT INTO member_permissions 
        (circle_id, user_id, can_view_calendar, can_view_messages, can_view_careplan, 
-        can_view_checklist, can_view_providers, can_view_members)
-       VALUES ($1, $2, true, true, false, true, false, false)`,
+        can_view_checklist, can_view_providers, can_view_members, can_view_links)
+       VALUES ($1, $2, true, true, false, true, false, false, false)`,
       [req.params.id, userResult.rows[0].id]
     );
     

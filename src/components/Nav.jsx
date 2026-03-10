@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { api } from '../utils/api';
 import useStore from '../store/useStore';
+import { usePermissions } from '../hooks/usePermissions';
 import './Nav.css';
 
 function Nav() {
@@ -9,6 +10,7 @@ function Nav() {
   const [nickname, setNickname] = useState('');
   const navigate = useNavigate();
   const { logout, currentCircle, user, setUser } = useStore();
+  const { permissions } = usePermissions();
 
   const handleLogout = () => {
     logout();
@@ -42,7 +44,7 @@ function Nav() {
             <>
               <a onClick={() => navigate('/dashboard')}>All Circles</a>
               <a onClick={() => navigate('/circle-home')}>Home</a>
-              <a onClick={() => navigate('/links')}>Links</a>
+              {permissions?.can_view_links && <a onClick={() => navigate('/links')}>Links</a>}
             </>
           )}
           <a onClick={() => setShowAccount(true)}>{user?.nickname || 'Account'}</a>

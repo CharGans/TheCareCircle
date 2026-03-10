@@ -23,7 +23,8 @@ export const usePermissions = () => {
           can_view_careplan: true,
           can_view_checklist: true,
           can_view_providers: true,
-          can_view_members: true
+          can_view_members: true,
+          can_view_links: true
         });
         setLoading(false);
         return;

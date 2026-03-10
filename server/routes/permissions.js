@@ -19,7 +19,8 @@ router.get('/:circleId/members/:userId', authenticateToken, async (req, res) => 
         can_view_careplan: false,
         can_view_checklist: true,
         can_view_providers: false,
-        can_view_members: false
+        can_view_members: false,
+        can_view_links: false
       });
     }
     
@@ -49,8 +50,8 @@ router.put('/:circleId/members/:userId', authenticateToken, async (req, res) => 
     const result = await pool.query(
       `INSERT INTO member_permissions 
        (circle_id, user_id, can_view_calendar, can_view_messages, can_view_careplan, 
-        can_view_checklist, can_view_providers, can_view_members, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP)
+        can_view_checklist, can_view_providers, can_view_members, can_view_links, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP)
        ON CONFLICT (circle_id, user_id) 
        DO UPDATE SET 
          can_view_calendar = $3,
@@ -59,6 +60,7 @@ router.put('/:circleId/members/:userId', authenticateToken, async (req, res) => 
          can_view_checklist = $6,
          can_view_providers = $7,
          can_view_members = $8,
+         can_view_links = $9,
          updated_at = CURRENT_TIMESTAMP
        RETURNING *`,
       [
@@ -69,7 +71,8 @@ router.put('/:circleId/members/:userId', authenticateToken, async (req, res) => 
         permissions.can_view_careplan ?? true,
         permissions.can_view_checklist ?? true,
         permissions.can_view_providers ?? true,
-        permissions.can_view_members ?? true
+        permissions.can_view_members ?? true,
+        permissions.can_view_links !== undefined ? permissions.can_view_links : false
       ]
     );
     
@@ -94,7 +97,8 @@ router.get('/:circleId/my-permissions', authenticateToken, async (req, res) => {
         can_view_careplan: false,
         can_view_checklist: true,
         can_view_providers: false,
-        can_view_members: false
+        can_view_members: false,
+        can_view_links: false
       });
     }
     

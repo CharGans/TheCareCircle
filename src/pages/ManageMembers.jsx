@@ -185,6 +185,14 @@ function ManageMembers() {
                 />
                 Members List
               </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={permissions.can_view_links ?? false}
+                  onChange={() => togglePermission('can_view_links')}
+                />
+                Links
+              </label>
             </div>
             <button onClick={savePermissions}>Save</button>
             <button onClick={() => setShowPermissions(false)}>Cancel</button>
