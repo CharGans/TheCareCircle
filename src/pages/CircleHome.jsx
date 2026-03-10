@@ -20,9 +20,9 @@ function CircleHome() {
   const navItems = [
     { name: 'Calendar', path: '/calendar', icon: '📅', description: 'View and manage events', permission: 'can_view_calendar' },
     { name: 'Messages', path: '/messages', icon: '💬', description: 'Chat with circle members', permission: 'can_view_messages' },
-    { name: 'Care Plan', path: '/careplan', icon: '💊', description: 'Medications and care notes', permission: 'can_view_careplan' },
+    { name: 'Care Journal', path: '/careplan', icon: '🗒️', description: 'Save care notes', permission: 'can_view_careplan' },
     { name: 'Checklist', path: '/checklist', icon: '✓', description: 'Tasks and to-dos', permission: 'can_view_checklist' },
-    { name: 'Providers', path: '/providers', icon: '🏥', description: 'Healthcare providers', permission: 'can_view_providers' }
+    { name: 'Healthcare', path: '/providers', icon: '🏥', description: 'Healthcare providers and medications', permission: 'can_view_providers' }
   ];
 
   if (permissions?.can_view_members) {

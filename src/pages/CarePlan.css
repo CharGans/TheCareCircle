@@ -17,15 +17,9 @@
   font-weight: 700;
 }
 
-.two-column-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  align-items: start;
-}
-
 .careplan section {
-  margin-bottom: 50px;
+  max-width: 800px;
+  margin: 0 auto;
   background: white;
   padding: 30px;
   border-radius: 20px;
@@ -165,7 +159,7 @@
   margin-top: 20px;
 }
 
-.med-card, .note-card {
+.note-card {
   background: white;
   padding: 25px;
   border-radius: 12px;
@@ -182,11 +176,12 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  display: flex;
+  display: inline-flex;
   gap: 8px;
 }
 
-.edit-btn, .delete-btn {
+.careplan .edit-btn,
+.careplan .delete-btn {
   width: 32px;
   height: 32px;
   border: none;
@@ -194,27 +189,28 @@
   font-size: 18px;
   cursor: pointer;
   transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
+  line-height: 32px;
+  text-align: center;
+  padding: 0;
 }
 
-.edit-btn {
+.careplan .edit-btn {
   background: #667eea;
   color: white;
 }
 
-.edit-btn:hover {
+.careplan .edit-btn:hover {
   background: #5568d3;
   transform: scale(1.1);
 }
 
-.delete-btn {
+.careplan .delete-btn {
   background: #dc3545;
   color: white;
 }
 
-.delete-btn:hover {
+.careplan .delete-btn:hover {
   background: #c82333;
   transform: scale(1.1);
 }
@@ -238,24 +234,9 @@
   border-color: #667eea;
 }
 
-.med-card:hover, .note-card:hover {
+.note-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.med-card h4 {
-  margin: 0 0 15px 0;
-  color: #667eea;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.med-card p {
-  margin: 8px 0;
-  color: #555;
-  line-height: 1.6;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
 }
 
 .note-card p {
@@ -273,10 +254,6 @@
 }
 
 @media (max-width: 768px) {
-  .two-column-layout {
-    grid-template-columns: 1fr;
-  }
-
   .careplan .content {
     padding: 20px 15px;
   }
