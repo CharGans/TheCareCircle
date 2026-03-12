@@ -34,8 +34,8 @@ function Home() {
             <p>Stay in touch with all caregivers</p>
           </div>
           <div className="feature">
-            <h4>💊 Care Plans</h4>
-            <p>Track medications and care notes</p>
+            <h4>🗒️ Care Journal</h4>
+            <p>Track care notes and updates</p>
           </div>
           <div className="feature">
             <h4>✓ Task Management</h4>
